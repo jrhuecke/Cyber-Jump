@@ -10,9 +10,12 @@ update will pop off the queue every time the boss is able to perform an attack, 
 
 public class Boss3D : MonoBehaviour
 {
-    private enum Attack{Gun, Charge, TurnAround, Missles, Laser};
+    private System.Random rng = new System.Random();
+    private enum Attack{Gun, Charge, TurnAround, Missiles, Laser};
     private Queue<Attack> bossQ;
-    private bool attacking = false; //will prevent the boss from overlapping attacks/used to space attacks out
+    private float attackRate = 3.0f; //at minimum 3 sec delay between attacks
+    private float nextAttack; //used to calculate when boss can begin next attack
+    private bool attacking = false; //is the boss currently in an attack animation
 
     // Start is called before the first frame update
     void Start()
@@ -28,34 +31,87 @@ public class Boss3D : MonoBehaviour
         if(!attacking) {
             if (bossQ.Count > 0) {
                 attacking = true;
-                Attack curr = bossQ.Dequeue;
+                nextAttack = Time.time + attackRate;
+                Attack curr = bossQ.Dequeue();
                 switch(curr) {
-                    case Attack.Gun: Gun();
-                    case Attack.Charge: Charge();
-                    case Attack.TurnAround: TurnAround();
-                    case Attack.Missles: Missiles();
-                    case Attack.Laser: Laser();
+                    case Attack.Gun:
+                        Gun();
+                        break;
+                    case Attack.Charge:
+                        Charge();
+                        break;
+                    case Attack.TurnAround:
+                        TurnAround();
+                        break;
+                    case Attack.Missiles:
+                        Missiles();
+                        break;
+                    case Attack.Laser:
+                        Laser();
+                        break;
+                    default: 
+                        Debug.Log("Failed to find attack function");
+                        break;
                 }
-                attacking = false;
             }
+        }
+
+        if(!attacking && Time.time > nextAttack) {
+            selectAttack();
         }
 
     }
 
+    void selectAttack() {
+        int pick = rng.Next(1,7);
+
+        switch(pick){
+            case 1: 
+                bossQ.Enqueue(Attack.Gun);
+                return;
+            case 2:
+                bossQ.Enqueue(Attack.Charge);
+                return;
+            case 3: 
+                bossQ.Enqueue(Attack.TurnAround);
+                return;
+            case 4:
+                bossQ.Enqueue(Attack.Missiles);
+                return;
+            case 5: 
+                bossQ.Enqueue(Attack.Laser);
+                return;
+            case 6:
+                bossQ.Enqueue(Attack.Charge);
+                bossQ.Enqueue(Attack.TurnAround);
+                return;
+            case 7:
+                bossQ.Enqueue(Attack.Laser);
+                bossQ.Enqueue(Attack.Gun);
+                bossQ.Enqueue(Attack.Missiles);
+                return;
+        }
+    }
+
     void Gun(){
         Debug.Log("Gun!");
+        attacking = false;
     }
     void Charge(){
         Debug.Log("Charge!");
+        attacking = false;
     }
     void TurnAround(){
         Debug.Log("TurnAround!");
+        attacking = false;
     }
     void Missiles(){
         Debug.Log("Missiles!");
+        attacking = false;
     }
     void Laser(){
         Debug.Log("Laser!");
+        attacking = false;
     }
 
 }
