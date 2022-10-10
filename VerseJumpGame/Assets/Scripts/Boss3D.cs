@@ -82,11 +82,15 @@ public class Boss3D : MonoBehaviour
         }
 
         if(!attacking && Time.time > nextAttack) {
-            selectAttack();
+            SelectAttack();
         }
     }
 
-    void selectAttack() {
+    void TakeDamage() {
+       Debug.Log("Boss took damage"); 
+    }
+
+    void SelectAttack() {
         int pick = rng.Next(1,7);
 
         switch(pick){
