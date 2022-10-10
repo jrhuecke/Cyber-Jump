@@ -22,6 +22,7 @@ public class Player3D : MonoBehaviour
     //Gun variables
     public Rigidbody bulletPrefab;
     public Transform bulletOrigin;
+    public Camera cam;
     public float bulletSpeed;
 
     void Update()
@@ -80,6 +81,18 @@ public class Player3D : MonoBehaviour
 
     private void Fire()
     {
+        /*Before shooting, sends out a raycast from the camera to see what the crosshair is currently
+          on and then rotates the bullet origin so the bullet shoots at where the crosshair was pointed.*/
+        RaycastHit hit;
+        Physics.Raycast(cam.transform.position, cam.transform.forward, out hit);
+        if (hit.point == Vector3.zero)
+        {
+            bulletOrigin.localRotation = Quaternion.Euler(0f, 0f, 0f);
+        }
+        else
+        {
+            bulletOrigin.LookAt(hit.point);
+        }
         Rigidbody bullet = Instantiate(bulletPrefab, bulletOrigin.position, bulletOrigin.rotation);
         bullet.velocity = bulletOrigin.forward * bulletSpeed;
     }
