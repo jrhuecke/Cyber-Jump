@@ -10,23 +10,46 @@ update will pop off the queue every time the boss is able to perform an attack, 
 
 public class Boss3D : MonoBehaviour
 {
+    [SerializeField] int gunShots = 3; //# of machine gun shots
+    [SerializeField] float bulletSpeed = 12f; //machine gun bullet speed
+    [SerializeField] float shotInterval = 0.3f;
+    private int fired; //track bullets fired and stop if it is >= gunshots
+
     private System.Random rng = new System.Random();
     private enum Attack{Gun, Charge, TurnAround, Missiles, Laser};
     private Queue<Attack> bossQ;
-    private float attackRate = 3.0f; //at minimum 3 sec delay between attacks
+    [SerializeField] float attackRate = 3.0f; //at minimum 3 sec delay between attacks
     private float nextAttack; //used to calculate when boss can begin next attack
     private bool attacking = false; //is the boss currently in an attack animation
+
+    public GameObject bulletPrefab;
+    private Collider bulletColl;
+    private Rigidbody bulletRB;
+    public GameObject player;
+    public GameObject projectileOrigin;
 
     // Start is called before the first frame update
     void Start()
     {
         bossQ = new Queue<Attack>();
+        fired = 0;
+
+        bulletRB = bulletPrefab.GetComponent<Rigidbody>();
+        bulletColl = bulletPrefab.GetComponent<Collider>();
+
+        Physics.IgnoreCollision(bulletColl, gameObject.GetComponent<Collider>());
+
+        bossQ.Enqueue(Attack.Gun);
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        //boss looking at player
+        gameObject.transform.LookAt(player.transform.position);
+        //tracking projectile origin to also look at player
+        projectileOrigin.transform.LookAt(player.transform.position);
         //execute the next attack in the queue
         if(!attacking) {
             if (bossQ.Count > 0) {
@@ -35,7 +58,9 @@ public class Boss3D : MonoBehaviour
                 Attack curr = bossQ.Dequeue();
                 switch(curr) {
                     case Attack.Gun:
-                        Gun();
+                        Debug.Log("Gun!");
+                        fired = 0;
+                        InvokeRepeating("Gun", 0, shotInterval);
                         break;
                     case Attack.Charge:
                         Charge();
@@ -59,7 +84,6 @@ public class Boss3D : MonoBehaviour
         if(!attacking && Time.time > nextAttack) {
             selectAttack();
         }
-
     }
 
     void selectAttack() {
@@ -94,8 +118,17 @@ public class Boss3D : MonoBehaviour
     }
 
     void Gun(){
-        Debug.Log("Gun!");
-        attacking = false;
+        if(fired < gunShots) {
+            Rigidbody bulletInstance = Instantiate(bulletRB, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
+            bulletInstance.velocity = gameObject.transform.forward * bulletSpeed;
+            Debug.Log("pew");
+            attacking = true;
+            fired += 1;
+        }
+        else {
+            CancelInvoke("Gun");
+            attacking = false;
+        }
     }
     void Charge(){
         Debug.Log("Charge!");
