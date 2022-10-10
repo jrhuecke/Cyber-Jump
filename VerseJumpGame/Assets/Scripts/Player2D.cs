@@ -101,4 +101,10 @@ public class Player2D : MonoBehaviour
         charAnimator.SetBool("Attacking", attacking);
         */
     }
+
+    //To be called by trigger colliders that are meant to deal damage to the player (bullets, boss melee, etc)
+    public void TakeDamage(int damage)
+    {
+        Debug.Log("Player took " + damage + " damage!");
+    }
 }
