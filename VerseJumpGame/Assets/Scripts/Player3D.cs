@@ -7,7 +7,7 @@ public class Player3D : MonoBehaviour
     //Movement variables
     public CharacterController controller;
     public float speed;
-    Vector3 velocity;
+    public Vector3 velocity, move;
     private float forwardMovement, sidewaysMovement;
 
     //Jumping/falling variables
@@ -16,34 +16,71 @@ public class Player3D : MonoBehaviour
     public float groundDistance;
     public float gravity = -9.81f;
     public float jumpPower;
+    public float fallMultiplier = 1.25f;
     private bool isGrounded;
+
+    //Gun variables
+    public Rigidbody bulletPrefab;
+    public Transform bulletOrigin;
+    public float bulletSpeed;
 
     void Update()
     {
         //checks if player is on ground by casting a sphere at players feet and seeing if that collides with the ground
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        //resets y velocity when player is on ground (so gravity doesn't constantly build up)
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -1f;
-        }
-        else
-        {
-            velocity.y += gravity * Time.deltaTime;
-        }
+
+        applyGravity();
 
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            velocity.y = jumpPower;
+            Jump();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            Fire();
         }
 
         //moves player on x and z axis
-        float sidewaysMovement = Input.GetAxis("Horizontal");
-        float forwardMovement = Input.GetAxis("Vertical");
-        Vector3 move = (transform.right * sidewaysMovement) + (transform.forward * forwardMovement);
-        controller.Move(move * speed * Time.deltaTime);
+        sidewaysMovement = Input.GetAxis("Horizontal") * speed;
+        forwardMovement = Input.GetAxis("Vertical") * speed;
+        move = (transform.right * sidewaysMovement) + (transform.forward * forwardMovement);
+        velocity = new Vector3(move.x, velocity.y, move.z);
 
-        //Moves player on y axis
-        controller.Move(velocity * Time.deltaTime);
+        //Moves player
+        if (velocity != Vector3.zero)
+        {
+            controller.Move(velocity * Time.deltaTime);
+        }
+    }
+
+    private void applyGravity()
+    {
+        //resets y velocity when player is on ground (so gravity doesn't constantly build up)
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+        //applies gravity when player is in the air
+        else if (!isGrounded && velocity.y > 0)
+        {
+            velocity.y += gravity * Time.deltaTime;
+        }
+        //applies greater gravity when player is falling to make jumping feel less floaty
+        else
+        {
+            velocity.y += gravity * fallMultiplier * Time.deltaTime;
+        }
+    }
+
+    private void Jump()
+    {
+        velocity.y = jumpPower;
+    }
+
+    private void Fire()
+    {
+        Rigidbody bullet = Instantiate(bulletPrefab, bulletOrigin.position, bulletOrigin.rotation);
+        bullet.velocity = bulletOrigin.forward * bulletSpeed;
     }
 }
