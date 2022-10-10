@@ -39,7 +39,7 @@ public class Boss3D : MonoBehaviour
 
         Physics.IgnoreCollision(bulletColl, gameObject.GetComponent<Collider>());
 
-        bossQ.Enqueue(Attack.Gun);
+
 
     }
 
