@@ -234,8 +234,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f956672ba3eb80a4d908040632959937, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gunShots: 3
-  bulletSpeed: 30
+  gunShots: 5
+  bulletSpeed: 20
   shotInterval: 0.3
   attackRate: 3
   bulletPrefab: {fileID: 3688718229346584139, guid: 099b1f347d101ba4b9137d4436a029f6, type: 3}
