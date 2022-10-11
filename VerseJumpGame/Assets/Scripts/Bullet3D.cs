@@ -14,6 +14,10 @@ public class Bullet3D : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.layer == 7)
+        {
+            print("Hit boss");
+        }
         Destroy(gameObject);
     }
 }

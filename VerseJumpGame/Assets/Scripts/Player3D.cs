@@ -4,6 +4,16 @@ using UnityEngine;
 
 public class Player3D : MonoBehaviour
 {
+    enum State
+    {
+        WAITING,
+        PRIMARY_FIRE,
+        SECONDARY_WIND_UP,
+        SECONDARY_FIRE
+    }
+
+    State state;
+
     //Movement variables
     public CharacterController controller;
     public float speed;
@@ -23,7 +33,27 @@ public class Player3D : MonoBehaviour
     public Rigidbody bulletPrefab;
     public Transform bulletOrigin;
     public Camera cam;
+
     public float bulletSpeed;
+    public float bulletFireRate;
+    private float bulletCooldownTimer;
+
+    public float secondaryFireCharge;
+    public float secondaryFireMaxCharge = 100f;
+    public float secondaryFireWindUp = .5f;
+    public float secondaryFireWindUpTimer;
+    private bool usingSecondaryFire;
+    public float secondaryFireTimer;
+    public float secondaryFireLength = 1.5f;
+    
+
+    private void Start()
+    {
+        bulletCooldownTimer = 0f;
+        secondaryFireWindUpTimer = secondaryFireWindUp;
+        usingSecondaryFire = false;
+        state = State.WAITING;
+    }
 
     void Update()
     {
@@ -37,9 +67,16 @@ public class Player3D : MonoBehaviour
             Jump();
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (usingSecondaryFire && secondaryFireWindUpTimer <= 0)
         {
-            Fire();
+            secondaryFireWindUpTimer = secondaryFireWindUp;
+            secondaryFire();
+        }
+        if (Input.GetKeyDown(KeyCode.Mouse1) && secondaryFireCharge >= secondaryFireMaxCharge && !usingSecondaryFire)
+        {
+            secondaryFireCharge = 0;
+            usingSecondaryFire = true;
+            secondaryFireWindUpTimer = secondaryFireWindUp;
         }
 
         //moves player on x and z axis
@@ -53,6 +90,51 @@ public class Player3D : MonoBehaviour
         {
             controller.Move(velocity * Time.deltaTime);
         }
+
+        if (bulletCooldownTimer > 0)
+        {
+            bulletCooldownTimer -= Time.deltaTime;
+        }
+
+        switch (state)
+        {
+            case State.WAITING:
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    state = State.PRIMARY_FIRE;
+                }
+                break;
+
+            case State.PRIMARY_FIRE:
+                //Shoots bullets at a set fire rate while button is held down
+                if (Input.GetKey(KeyCode.Mouse0))
+                {
+                    if (bulletCooldownTimer <= 0)
+                    {
+                        bulletCooldownTimer = bulletFireRate;
+                        primaryFire();
+                    }
+                } 
+                else
+                {
+                    state = State.WAITING;
+                }
+                break;
+
+            case State.SECONDARY_WIND_UP:
+                secondaryFireWindUpTimer -= Time.deltaTime;
+                if (secondaryFireWindUpTimer <= 0)
+                {
+                    secondaryFireWindUpTimer = secondaryFireWindUp;
+                    state = State.SECONDARY_FIRE;
+                    secondaryFire();
+                }
+                break;
+
+            case State.SECONDARY_FIRE:
+                break;
+        }
+
     }
 
     private void applyGravity()
@@ -79,7 +161,7 @@ public class Player3D : MonoBehaviour
         velocity.y = jumpPower;
     }
 
-    private void Fire()
+    private void primaryFire()
     {
         /*Before shooting, sends out a raycast from the camera to see what the crosshair is currently
           on and then rotates the bullet origin so the bullet shoots at where the crosshair was pointed.*/
@@ -95,5 +177,10 @@ public class Player3D : MonoBehaviour
         }
         Rigidbody bullet = Instantiate(bulletPrefab, bulletOrigin.position, bulletOrigin.rotation);
         bullet.velocity = bulletOrigin.forward * bulletSpeed;
+    }
+
+    private void secondaryFire()
+    {
+
     }
 }
