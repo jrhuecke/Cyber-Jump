@@ -31,6 +31,7 @@ public class Player3D : MonoBehaviour
 
     //Gun variables
     public Rigidbody bulletPrefab;
+    public GameObject laserPrefab;
     public Transform bulletOrigin;
     public Camera cam;
 
@@ -65,18 +66,6 @@ public class Player3D : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             Jump();
-        }
-
-        if (usingSecondaryFire && secondaryFireWindUpTimer <= 0)
-        {
-            secondaryFireWindUpTimer = secondaryFireWindUp;
-            secondaryFire();
-        }
-        if (Input.GetKeyDown(KeyCode.Mouse1) && secondaryFireCharge >= secondaryFireMaxCharge && !usingSecondaryFire)
-        {
-            secondaryFireCharge = 0;
-            usingSecondaryFire = true;
-            secondaryFireWindUpTimer = secondaryFireWindUp;
         }
 
         //moves player on x and z axis
@@ -122,16 +111,36 @@ public class Player3D : MonoBehaviour
                 break;
 
             case State.SECONDARY_WIND_UP:
+                //Charge up time before secondary fire goes off
                 secondaryFireWindUpTimer -= Time.deltaTime;
                 if (secondaryFireWindUpTimer <= 0)
                 {
                     secondaryFireWindUpTimer = secondaryFireWindUp;
+                    secondaryFireTimer = secondaryFireLength;
+                    laserPrefab.SetActive(true);
                     state = State.SECONDARY_FIRE;
-                    secondaryFire();
                 }
                 break;
 
             case State.SECONDARY_FIRE:
+                //Goes back to waiting when fire length is reached
+                if (secondaryFireTimer <= 0)
+                {
+                    state = State.WAITING;
+                }
+                /* Fires out raycast to update where laser should be pointed every frame so
+                  that it actually points at crosshair */
+                secondaryFireTimer -= Time.deltaTime;
+                RaycastHit target;
+                Physics.Raycast(cam.transform.position, cam.transform.forward, out target);
+                if (target.point == Vector3.zero)
+                {
+                    bulletOrigin.localRotation = Quaternion.Euler(0f, 0f, 0f);
+                }
+                else
+                {
+                    bulletOrigin.LookAt(target.point);
+                }
                 break;
         }
 
@@ -163,8 +172,8 @@ public class Player3D : MonoBehaviour
 
     private void primaryFire()
     {
-        /*Before shooting, sends out a raycast from the camera to see what the crosshair is currently
-          on and then rotates the bullet origin so the bullet shoots at where the crosshair was pointed.*/
+        /* Before shooting, sends out a raycast from the camera to see what the crosshair is currently
+          on and then rotates the bullet origin so the bullet shoots at where the crosshair was pointed. */
         RaycastHit hit;
         Physics.Raycast(cam.transform.position, cam.transform.forward, out hit);
         if (hit.point == Vector3.zero)
