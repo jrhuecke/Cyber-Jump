@@ -28,7 +28,6 @@ public class Boss2D : MonoBehaviour
     public Player2D player;
     //When interrupting behaviors, we need to make sure that all of these get reset to their default values.
     float waitTillTime = 0f; //Used by behaviors that wait until a certain amount of time has passed
-    Vector2 lockOnPosition = Vector2.zero;
     int repeatActionCounter = 0;
     int repeatThisMany = 0;
     bool swingingSword = false;
@@ -114,11 +113,7 @@ public class Boss2D : MonoBehaviour
         if(lastFrameResult != BehaviorResult.Running)
         {
             Debug.Log("Started sword slashes");
-            lockOnPosition = player.transform.position;
-            //Aim weaponRoot at the player (we might not even need a lock-on position...
-            Vector2 aimDirection = new Vector2(player.transform.position.x - gameObject.transform.position.x, player.transform.position.y - gameObject.transform.position.y);
-            float aimRotation = Vector2.Angle(Vector2.zero, aimDirection); //Returns 0 always?
-            weaponRoot.transform.Rotate(new Vector3(0, 0, aimRotation - weaponRoot.transform.rotation.z));
+            weaponRoot.transform.right = gameObject.transform.position - player.transform.position;
 
             repeatActionCounter = 0;
             repeatThisMany = 3; //Choose random # of times to slash

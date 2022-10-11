@@ -42,7 +42,7 @@ public class Player2D : MonoBehaviour
         Cursor.visible = false;
 
         Rigidbody2D bulletInstance = Instantiate(bulletPrefab, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
-        bulletInstance.velocity = weaponRoot.transform.forward * bulletSpeed;
+        bulletInstance.velocity = weaponRoot.transform.right * bulletSpeed;
     }
 
     void OnMove(InputValue value)
@@ -73,16 +73,18 @@ public class Player2D : MonoBehaviour
         if (crosshair.transform.position.x > gameObject.transform.position.x)
         {
             sprite.flipX = false;
+            weaponRoot.transform.localScale = new Vector3(1, 1, 1);
         }
         else
         {
             sprite.flipX = true;
+            weaponRoot.transform.localScale = new Vector3(1, -1, 1);
         }
 
         //Gun + projectile rotation
-        Vector2 aimDirection = new Vector2(crosshair.transform.position.x - gameObject.transform.position.x, crosshair.transform.position.y - gameObject.transform.position.y);
-        float aimRotation = Vector2.Angle(Vector2.zero, aimDirection); //Returns 0 always?
-        weaponRoot.transform.LookAt(new Vector2(crosshair.transform.position.x, crosshair.transform.position.y));
+        Vector3 crosshair2Dpos = crosshair.transform.position;
+        crosshair2Dpos.z = 0;
+        weaponRoot.transform.right = crosshair2Dpos - gameObject.transform.position;
 
         /*
         if(moveInput != Vector2.zero && !attacking) //If player stops moving, the direction they were facing will persist instead of being reset
