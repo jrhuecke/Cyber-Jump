@@ -82,7 +82,6 @@ public class Boss3D : MonoBehaviour
         }
 
         if(!attacking && Time.time > nextAttack) {
-            bossQ.Enqueue(Attack.Gun);
             SelectAttack();
         }
     }
