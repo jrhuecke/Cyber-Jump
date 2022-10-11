@@ -147,9 +147,37 @@ public class Boss3D : MonoBehaviour
 
     //attack selection ai
     void SelectAttack() {
-        int pick = rng.Next(1,7);
+        int pick = rng.Next(1,100);
 
-        switch(pick){
+        if(pick < 55) {
+            Debug.Log(Vector3.Distance(gameObject.transform.position, player.transform.position));
+            if(Vector3.Distance(gameObject.transform.position, player.transform.position) < 6.8f) {
+                bossQ.Enqueue(Attack.TurnAround);
+            }
+            else{
+                bossQ.Enqueue(Attack.Gun);
+            }
+        }
+        else if(pick >= 55 && pick < 75) {
+            bossQ.Enqueue(Attack.Charge);
+            bossQ.Enqueue(Attack.TurnAround);
+        }
+        else if(pick >= 75 && pick < 90) {
+            Debug.Log(Vector3.Distance(gameObject.transform.position, player.transform.position));
+            if(Vector3.Distance(gameObject.transform.position, player.transform.position) < 6.8f) {
+                bossQ.Enqueue(Attack.TurnAround);
+            }
+            else{
+                bossQ.Enqueue(Attack.Laser);
+            }
+        
+        }
+        else {
+            bossQ.Enqueue(Attack.Missiles);
+        }
+
+        //old 1-7 rng 
+       /* switch(pick){
             case 1: 
                 bossQ.Enqueue(Attack.Gun);
                 return;
@@ -174,7 +202,7 @@ public class Boss3D : MonoBehaviour
                 bossQ.Enqueue(Attack.Gun);
                 bossQ.Enqueue(Attack.Missiles);
                 return;
-        } 
+        } */
     }
 
     void Gun(){
