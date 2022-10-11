@@ -219,6 +219,7 @@ GameObject:
   - component: {fileID: 563993632}
   - component: {fileID: 563993635}
   - component: {fileID: 563993634}
+  - component: {fileID: 563993636}
   m_Layer: 7
   m_Name: Boss2D
   m_TagString: Untagged
@@ -331,6 +332,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &563993636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 563993631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff2a0569c1fd004bb7fa9afa4805048, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &811649670
 GameObject:
   m_ObjectHideFlags: 0
@@ -391,7 +404,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 8bfde4359e88c2c42972214e9d70740c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
