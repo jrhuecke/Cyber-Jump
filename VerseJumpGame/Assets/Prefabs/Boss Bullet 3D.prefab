@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9053107560664082066}
   - component: {fileID: -1325839935465837397}
   m_Layer: 0
-  m_Name: Bullet3D
+  m_Name: Boss Bullet 3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

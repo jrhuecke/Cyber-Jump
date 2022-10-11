@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet3D : MonoBehaviour
+public class BossBullet3D : MonoBehaviour
 {
     public float lifetime = 5.0f;
     Rigidbody rb;
