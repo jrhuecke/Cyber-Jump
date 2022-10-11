@@ -118,7 +118,7 @@ public class Boss3D : MonoBehaviour
                 bossQ.Enqueue(Attack.Gun);
                 bossQ.Enqueue(Attack.Missiles);
                 return;
-        }
+        } 
     }
 
     void Gun(){
