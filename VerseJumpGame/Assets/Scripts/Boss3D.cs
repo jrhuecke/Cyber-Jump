@@ -11,7 +11,7 @@ update will pop off the queue every time the boss is able to perform an attack, 
 public class Boss3D : MonoBehaviour
 {
     [SerializeField] int gunShots = 3; //# of machine gun shots
-    [SerializeField] float bulletSpeed = 12f; //machine gun bullet speed
+    [SerializeField] float bulletSpeed = 30f; //machine gun bullet speed
     [SerializeField] float shotInterval = 0.3f;
     private int fired; //track bullets fired and stop if it is >= gunshots
 
@@ -124,7 +124,7 @@ public class Boss3D : MonoBehaviour
     void Gun(){
         if(fired < gunShots) {
             Rigidbody bulletInstance = Instantiate(bulletRB, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
-            bulletInstance.velocity = gameObject.transform.forward * bulletSpeed;
+            bulletInstance.velocity = projectileOrigin.transform.forward * bulletSpeed;
             Debug.Log("pew");
             attacking = true;
             fired += 1;
