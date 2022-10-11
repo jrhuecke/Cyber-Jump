@@ -31,8 +31,9 @@ public class Player3D : MonoBehaviour
 
     //Gun variables
     public Rigidbody bulletPrefab;
-    public GameObject laserPrefab;
+    public GameObject laserObject;
     public Transform bulletOrigin;
+    public LayerMask environmentLayers;
     public Camera cam;
 
     public float bulletSpeed;
@@ -42,9 +43,8 @@ public class Player3D : MonoBehaviour
     public float secondaryFireCharge;
     public float secondaryFireMaxCharge = 100f;
     public float secondaryFireWindUp = .5f;
-    public float secondaryFireWindUpTimer;
-    private bool usingSecondaryFire;
-    public float secondaryFireTimer;
+    private float secondaryFireWindUpTimer;
+    private float secondaryFireTimer;
     public float secondaryFireLength = 1.5f;
     
 
@@ -52,7 +52,6 @@ public class Player3D : MonoBehaviour
     {
         bulletCooldownTimer = 0f;
         secondaryFireWindUpTimer = secondaryFireWindUp;
-        usingSecondaryFire = false;
         state = State.WAITING;
     }
 
@@ -92,6 +91,10 @@ public class Player3D : MonoBehaviour
                 {
                     state = State.PRIMARY_FIRE;
                 }
+                else if (Input.GetKeyDown(KeyCode.Mouse1))
+                {
+                    state = State.SECONDARY_WIND_UP;
+                }
                 break;
 
             case State.PRIMARY_FIRE:
@@ -117,7 +120,7 @@ public class Player3D : MonoBehaviour
                 {
                     secondaryFireWindUpTimer = secondaryFireWindUp;
                     secondaryFireTimer = secondaryFireLength;
-                    laserPrefab.SetActive(true);
+                    laserObject.SetActive(true);
                     state = State.SECONDARY_FIRE;
                 }
                 break;
@@ -126,20 +129,25 @@ public class Player3D : MonoBehaviour
                 //Goes back to waiting when fire length is reached
                 if (secondaryFireTimer <= 0)
                 {
+                    laserObject.SetActive(false);
                     state = State.WAITING;
                 }
                 /* Fires out raycast to update where laser should be pointed every frame so
                   that it actually points at crosshair */
                 secondaryFireTimer -= Time.deltaTime;
                 RaycastHit target;
-                Physics.Raycast(cam.transform.position, cam.transform.forward, out target);
+                Physics.Raycast(cam.transform.position, cam.transform.forward, out target, 100f, environmentLayers);
                 if (target.point == Vector3.zero)
                 {
                     bulletOrigin.localRotation = Quaternion.Euler(0f, 0f, 0f);
+                    laserObject.transform.localPosition = new Vector3(0f, 0f, 10f);
+                    laserObject.transform.localScale = new Vector3(0.3f, 10f, 0.3f);            
                 }
                 else
                 {
                     bulletOrigin.LookAt(target.point);
+                    laserObject.transform.localPosition = new Vector3(0f, 0f, Mathf.Abs(Vector3.Distance(bulletOrigin.position, target.point)) / 2);
+                    laserObject.transform.localScale = new Vector3(0.3f, Mathf.Abs(Vector3.Distance(bulletOrigin.position, target.point)) / 2, 0.3f);
                 }
                 break;
         }
