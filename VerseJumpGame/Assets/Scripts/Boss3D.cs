@@ -32,8 +32,10 @@ public class Boss3D : MonoBehaviour
     private bool boostingUp = false;
     private float chargeTime = 0f;
     private Transform targetDest;
-    [SerializeField] float boostHeight = 1f;
+    private float dist;
+    [SerializeField] float boostHeight = 3f;
     [SerializeField] float boostDuration = 0.5f;
+    [SerializeField] float chargeDuration = 2f;
 
     public GameObject bulletPrefab;
     private Collider bulletColl;
@@ -81,12 +83,22 @@ public class Boss3D : MonoBehaviour
             else {
                 boostingUp = false;
                 isCharging = true;
-                targetDest.position = player.transform.position;
+                dist = Vector3.Distance(targetDest.position, gameObject.transform.position);
             }
 
         }
         if(isCharging) {
-
+            if(Time.time <= chargeTime + boostDuration + chargeDuration) {
+                gameObject.transform.Translate(Vector3.forward * Time.deltaTime * (dist/chargeDuration));
+            }
+            else{
+                isCharging = false;
+                attacking = false;
+                gameObject.transform.SetPositionAndRotation(new Vector3(
+                    gameObject.transform.position.x, 3, gameObject.transform.position.z),
+                    gameObject.transform.rotation);
+                passiveTracking = true;
+            }
         }
 
         //tracking projectile origin to aim at player
@@ -125,8 +137,7 @@ public class Boss3D : MonoBehaviour
 
         //randomly select the next attack
         if(!attacking && Time.time > nextAttack) {
-            bossQ.Enqueue(Attack.TurnAround);
-            //SelectAttack();
+            SelectAttack();
         }
     }
 
@@ -184,6 +195,9 @@ public class Boss3D : MonoBehaviour
         attacking = true;
         boostingUp = true;
         chargeTime = Time.time;
+        passiveTracking = false;
+        targetDest = player.transform;
+        gameObject.transform.LookAt(player.transform.position);
         
     }
     void TurnAround(){

@@ -829,6 +829,7 @@ MonoBehaviour:
   spinDuration: 0.45
   boostHeight: 1
   boostDuration: 0.5
+  chargeDuration: 0.3
   bulletPrefab: {fileID: 3688718229346584139, guid: 099b1f347d101ba4b9137d4436a029f6, type: 3}
   player: {fileID: 295178361}
   projectileOrigin: {fileID: 913699761}
@@ -904,7 +905,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1076830440}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.18, y: 3.18, z: 7.74}
+  m_LocalPosition: {x: 1, y: 3, z: 8}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
