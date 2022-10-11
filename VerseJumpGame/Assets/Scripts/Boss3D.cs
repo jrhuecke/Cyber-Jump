@@ -22,11 +22,25 @@ public class Boss3D : MonoBehaviour
     private float nextAttack; //used to calculate when boss can begin next attack
     private bool attacking = false; //is the boss currently in an attack animation
 
+    private bool passiveTracking = true; //boss constantly turns to look at player if true.
+    private bool isSpinning = false;
+    private float spinTime = 0f;
+    [SerializeField] float spinDuration = 1f;
+    private float spinSpeed;
+
+    private bool isCharging = false;
+    private bool boostingUp = false;
+    private float chargeTime = 0f;
+    private Transform targetDest;
+    [SerializeField] float boostHeight = 1f;
+    [SerializeField] float boostDuration = 0.5f;
+
     public GameObject bulletPrefab;
     private Collider bulletColl;
     private Rigidbody bulletRB;
     public GameObject player;
     public GameObject projectileOrigin;
+    public GameObject sword;
 
     // Start is called before the first frame update
     void Start()
@@ -38,18 +52,46 @@ public class Boss3D : MonoBehaviour
         bulletColl = bulletPrefab.GetComponent<Collider>();
 
         Physics.IgnoreCollision(bulletColl, gameObject.GetComponent<Collider>());
-
-
+        spinSpeed = (360/spinDuration);
+        Debug.Log(spinSpeed);
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        //boss looking at player
-        gameObject.transform.LookAt(player.transform.position);
-        //tracking projectile origin to also look at player
+        //boss looking at player when enabled
+        if (passiveTracking) {gameObject.transform.LookAt(player.transform.position);}
+
+        //boss is spinning for turn attack when enabled
+        if(isSpinning) {
+            gameObject.transform.RotateAround(gameObject.transform.position, Vector3.up, spinSpeed * Time.deltaTime);
+            if (Time.time >= spinTime + spinDuration) {
+                isSpinning = false;
+                sword.transform.Rotate(-90, 0, 0);
+                attacking = false;
+                passiveTracking = true;
+            }
+        }
+
+        if(boostingUp) {
+            if(Time.time <= chargeTime + boostDuration) {
+                gameObject.transform.Translate(Vector3.up * Time.deltaTime * (boostHeight/boostDuration), Space.World);
+            }
+            else {
+                boostingUp = false;
+                isCharging = true;
+                targetDest.position = player.transform.position;
+            }
+
+        }
+        if(isCharging) {
+
+        }
+
+        //tracking projectile origin to aim at player
         projectileOrigin.transform.LookAt(player.transform.position);
+
         //execute the next attack in the queue
         if(!attacking) {
             if (bossQ.Count > 0) {
@@ -81,8 +123,10 @@ public class Boss3D : MonoBehaviour
             }
         }
 
+        //randomly select the next attack
         if(!attacking && Time.time > nextAttack) {
-            SelectAttack();
+            bossQ.Enqueue(Attack.TurnAround);
+            //SelectAttack();
         }
     }
 
@@ -90,6 +134,7 @@ public class Boss3D : MonoBehaviour
        Debug.Log("Boss took damage"); 
     }
 
+    //attack selection ai
     void SelectAttack() {
         int pick = rng.Next(1,7);
 
@@ -136,11 +181,18 @@ public class Boss3D : MonoBehaviour
     }
     void Charge(){
         Debug.Log("Charge!");
-        attacking = false;
+        attacking = true;
+        boostingUp = true;
+        chargeTime = Time.time;
+        
     }
     void TurnAround(){
         Debug.Log("TurnAround!");
-        attacking = false;
+        passiveTracking = false;
+        sword.transform.Rotate(90,0,0);
+        spinTime = Time.time;
+        isSpinning = true;
+        
     }
     void Missiles(){
         Debug.Log("Missiles!");
