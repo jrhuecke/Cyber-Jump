@@ -15,12 +15,13 @@ public class Boss2D : MonoBehaviour
      */
     Animator animPlayer;
     SpriteRenderer sprite;
+    Rigidbody2D rigidbod;
 
     private enum BehaviorResult { Success, Running, Failure };
     BehaviorResult lastFrameResult = BehaviorResult.Success;
 
-    private enum Behavior { None, SimpleBehavior, SwordSlashes };
-    Behavior[] attackList = { Behavior.SwordSlashes }; //The behaviors that are attacks
+    private enum Behavior { None, SimpleBehavior, SwordSlashes, ChargeAndTurn };
+    Behavior[] attackList = { Behavior.SwordSlashes, Behavior.ChargeAndTurn }; //The behaviors that are attacks
     Behavior currentBehavior = Behavior.None;
     public float attackInterval = 2.0f;
     float doNotAttackTill;
@@ -34,6 +35,8 @@ public class Boss2D : MonoBehaviour
     int repeatActionCounter = 0;
     int repeatThisMany = 0;
     bool swingingSword = false;
+    int chargePhase = 0;
+    ChargeTargetPos2D chargeTarget;
 
     [Header("Sword Slash")]
     public BulletSpread2D bulletSpread;
@@ -42,11 +45,15 @@ public class Boss2D : MonoBehaviour
     public float spreadSphereRadius = 2.0f;
     public float spreadSize = 120.0f;
 
+    [Header("Charge")]
+    public ChargeTargetPos2D chargeTargetPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
         animPlayer = gameObject.GetComponent<Animator>();
         sprite = gameObject.GetComponent<SpriteRenderer>();
+        rigidbod = gameObject.GetComponent<Rigidbody2D>();
         doNotAttackTill = Time.time + attackInterval;
     }
 
@@ -62,7 +69,7 @@ public class Boss2D : MonoBehaviour
         if(currentBehavior == Behavior.None)
         {
             if (Time.time >= doNotAttackTill)
-                currentBehavior = chooseAttack(); //Replace w/ function that chooses an attack
+                currentBehavior = Behavior.ChargeAndTurn;// chooseAttack(); //Replace w/ function that chooses an attack
             else
             {
                 //Look at player? (Only if not executing a behavior)
@@ -85,6 +92,9 @@ public class Boss2D : MonoBehaviour
                     break;
                 case Behavior.SwordSlashes:
                     lastFrameResult = swordSwipes(2, 6);
+                    break;
+                case Behavior.ChargeAndTurn:
+                    lastFrameResult = chargeAndTurn();
                     break;
                 default:
                     lastFrameResult = BehaviorResult.Failure;
@@ -189,6 +199,59 @@ public class Boss2D : MonoBehaviour
         //Debug.Log("Finished sword slash animation");
         repeatActionCounter += 1;
         swingingSword = false;
+    }
+
+    BehaviorResult chargeAndTurn()
+    {
+        /*
+         * Boss locks onto slightly past player's current position
+         * Boss does a short startup animation
+         * Boss rushes forward quickly towards the locked-on position.
+         * He stops when he reaches the position or when he collides into the wall
+         * Turns around in X time and then follows up with a sword slashes attack
+         *     (If he collided with a wall while charging, the turn take a bit longer)
+         */
+
+        if(lastFrameResult != BehaviorResult.Running) //First time call
+        {
+            Debug.Log("Started charge attack");
+            weaponRoot.transform.right = player.transform.position - gameObject.transform.position;
+            //Spawn a target position, store a refernce to it so it can be destroyed later
+            chargeTarget = Instantiate(chargeTargetPrefab);
+            chargeTarget.transform.position = player.transform.position + (weaponRoot.transform.right.normalized * 4);
+
+            animPlayer.Play("BossChargeStartup");
+            waitTillTime = Time.time + 1.0f; //Do the startup animation for x seconds
+
+            chargePhase = 0;
+        }
+        if(Time.time > waitTillTime)
+        {
+            if (chargePhase == 0) //Could replace with switch
+            {
+                rigidbod.velocity = weaponRoot.transform.right.normalized * 16.0f;
+                animPlayer.Play("BossIdle");
+            }
+            else if(chargePhase == 1)
+            {
+                //Charging
+            }
+            else if(chargePhase == 2)
+            {
+                //Stopped charging, do turn around
+                return BehaviorResult.Success;
+            }
+        }
+
+        return BehaviorResult.Running;
+    }
+
+    public void StopCharging(bool hitWall)
+    {
+        rigidbod.velocity = Vector2.zero;
+        chargePhase = 2;
+        Destroy(chargeTarget.gameObject); //The charge target seems to stop making the boss stop, but the object isn't removed from the scene...
+        chargeTarget = null;
     }
 
     //Later when the boss is defeated or switches phase - whatever the current behavior is must be interrupted.
