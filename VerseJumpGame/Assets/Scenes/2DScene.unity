@@ -387,6 +387,9 @@ MonoBehaviour:
   spreadSphereRadius: 2
   spreadSize: 144
   chargeTargetPrefab: {fileID: 8674361255728873887, guid: 434fe9a0492d50945be27b4585d4af37, type: 3}
+  chargeStartupTime: 1
+  chargeOvershoot: 4
+  chargeSpeed: 24
 --- !u!95 &563993637
 Animator:
   serializedVersion: 4
