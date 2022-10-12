@@ -974,6 +974,8 @@ MonoBehaviour:
   bulletPrefab: {fileID: 6548126989956812629, guid: 97104ec789b6cb647b81156460421b57, type: 3}
   bulletDamage: 10
   bulletSpeed: 16
+  rateOfFireMG: 0.166
+  randomSpreadMG: 4
 --- !u!1 &1437578309
 GameObject:
   m_ObjectHideFlags: 0

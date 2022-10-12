@@ -17,6 +17,7 @@ public class Player2D : MonoBehaviour
     // Start is called before the first frame update
     public float speedMax = 8.0f;
     Vector2 moveInput = Vector2.zero;
+    float fireInput = 0;
     Rigidbody2D rigidbody;
     SpriteRenderer sprite;
 
@@ -29,10 +30,13 @@ public class Player2D : MonoBehaviour
     public float iFrames = 1.0f;
     float endiFrames = 0.0f;
 
-    [Header("Machine Gun bullets")]
+    [Header("Machine Gun")]
     public Rigidbody2D bulletPrefab;
     public int bulletDamage = 10;
     public float bulletSpeed = 16.0f;
+    public float rateOfFireMG = 0.166f;
+    float shootDelay = 0;
+    public float randomSpreadMG = 4.0f; //Degrees in which the bullet can randomly offshoot
 
     void Start()
     {
@@ -43,13 +47,10 @@ public class Player2D : MonoBehaviour
 
     /*The player input component sends these function calls/"messages" to this script
       The various function calls are listed on the component itself.*/
-    void OnFire()
+    void OnFire(InputValue value)
     {
+        fireInput = value.Get<float>();
         Cursor.visible = false;
-
-        Rigidbody2D bulletInstance = Instantiate(bulletPrefab, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
-        bulletInstance.velocity = weaponRoot.transform.right * bulletSpeed;
-        bulletInstance.gameObject.GetComponent<DamageBoss2D>().DamageToBoss = bulletDamage;
     }
 
     void OnMove(InputValue value)
@@ -72,6 +73,15 @@ public class Player2D : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //Machine gun shooting
+        if (fireInput > 0.0f && Time.time >= shootDelay)
+        {
+            Rigidbody2D bulletInstance = Instantiate(bulletPrefab, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
+            bulletInstance.velocity = weaponRoot.transform.right * bulletSpeed;
+            bulletInstance.gameObject.GetComponent<DamageBoss2D>().DamageToBoss = bulletDamage;
+            shootDelay = Time.time + rateOfFireMG;
+        }
+
         Vector3 conversion = new Vector3(moveInput.x, moveInput.y);
         conversion = conversion.normalized;
         rigidbody.velocity = conversion * speedMax;
