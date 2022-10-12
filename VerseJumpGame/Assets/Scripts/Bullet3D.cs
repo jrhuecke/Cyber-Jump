@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet3D : MonoBehaviour
 {
     public float lifetime = 2.0f;
+    public Player3D player3D;
 
     // Start is called before the first frame update
     void Start()
@@ -14,6 +15,10 @@ public class Bullet3D : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.layer == 7)
+        {
+           player3D.secondaryFireCharge += 5;
+        }
         Destroy(gameObject);
     }
 }
