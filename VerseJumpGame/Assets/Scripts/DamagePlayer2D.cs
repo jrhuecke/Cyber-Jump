@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossDamagePlayer2D : MonoBehaviour
+//Attach this script to any GameObject with a 2D collider that is a trigger to make it damage the player
+public class DamagePlayer2D : MonoBehaviour
 {
     public int DamageToPlayer;
 

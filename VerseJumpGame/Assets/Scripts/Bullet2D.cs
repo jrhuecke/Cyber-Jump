@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//NOTE: Used by both player and boss bullets
 public class Bullet2D : MonoBehaviour
 {
     public float lifetime = 5.0f;
