@@ -17,7 +17,7 @@ public class Bullet3D : MonoBehaviour
     {
         if (other.gameObject.layer == 7)
         {
-           //player3D.secondaryFireCharge += 5;
+           player3D.secondaryFireCharge += 5;
         }
         Destroy(gameObject);
     }

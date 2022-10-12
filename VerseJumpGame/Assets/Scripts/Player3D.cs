@@ -20,6 +20,9 @@ public class Player3D : MonoBehaviour
     public Vector3 velocity, move;
     private float forwardMovement, sidewaysMovement;
 
+    //Health variables
+    public float playerHealth3D = 100f;
+
     //Jumping/falling variables
     public Transform groundCheck;
     public LayerMask groundMask;
@@ -84,6 +87,7 @@ public class Player3D : MonoBehaviour
             bulletCooldownTimer -= Time.deltaTime;
         }
 
+        //state machine for player's shooting
         switch (state)
         {
             case State.WAITING:
@@ -91,9 +95,10 @@ public class Player3D : MonoBehaviour
                 {
                     state = State.PRIMARY_FIRE;
                 }
-                else if (Input.GetKeyDown(KeyCode.Mouse1))
+                else if (Input.GetKeyDown(KeyCode.Mouse1) && secondaryFireCharge >= secondaryFireMaxCharge)
                 {
                     state = State.SECONDARY_WIND_UP;
+                    secondaryFireCharge = 0;
                 }
                 break;
 
@@ -132,23 +137,8 @@ public class Player3D : MonoBehaviour
                     laserObject.SetActive(false);
                     state = State.WAITING;
                 }
-                /* Fires out raycast to update where laser should be pointed every frame so
-                  that it actually points at crosshair */
                 secondaryFireTimer -= Time.deltaTime;
-                RaycastHit target;
-                Physics.Raycast(cam.transform.position, cam.transform.forward, out target, 100f, environmentLayers);
-                if (target.point == Vector3.zero)
-                {
-                    bulletOrigin.localRotation = Quaternion.Euler(0f, 0f, 0f);
-                    laserObject.transform.localPosition = new Vector3(0f, 0f, 10f);
-                    laserObject.transform.localScale = new Vector3(0.3f, 10f, 0.3f);            
-                }
-                else
-                {
-                    bulletOrigin.LookAt(target.point);
-                    laserObject.transform.localPosition = new Vector3(0f, 0f, Mathf.Abs(Vector3.Distance(bulletOrigin.position, target.point)) / 2);
-                    laserObject.transform.localScale = new Vector3(0.3f, Mathf.Abs(Vector3.Distance(bulletOrigin.position, target.point)) / 2, 0.3f);
-                }
+                secondaryFire();
                 break;
         }
 
@@ -194,10 +184,30 @@ public class Player3D : MonoBehaviour
         }
         Rigidbody bullet = Instantiate(bulletPrefab, bulletOrigin.position, bulletOrigin.rotation);
         bullet.velocity = bulletOrigin.forward * bulletSpeed;
+        //attaches the player3D script to the bullet, so it can access the secondary charge variable
+        Bullet3D bulletScript = bullet.GetComponent<Bullet3D>();
+        bulletScript.player3D = this;
     }
 
     private void secondaryFire()
     {
-
+        /* Fires out raycast to update where laser should be pointed every frame so
+           that it actually points at crosshair */
+        RaycastHit target;
+        Physics.Raycast(cam.transform.position, cam.transform.forward, out target, 100f, environmentLayers);
+        if (target.point == Vector3.zero)
+        {
+            bulletOrigin.localRotation = Quaternion.Euler(0f, 0f, 0f);
+            laserObject.transform.localPosition = new Vector3(0f, 0f, 10f);
+            laserObject.transform.localScale = new Vector3(0.3f, 10f, 0.3f);
+        }
+        else
+        {
+            /* Updates the local position and scale of laser so that it doesn't go through objects (it intentionally pokes a tiny bit into objects
+               so that damage collision can be detected) */
+            bulletOrigin.LookAt(target.point);
+            laserObject.transform.localPosition = new Vector3(0f, 0f, Mathf.Abs((Vector3.Distance(bulletOrigin.position, target.point)) + 0.5f) / 2);
+            laserObject.transform.localScale = new Vector3(0.3f, Mathf.Abs((Vector3.Distance(bulletOrigin.position, target.point)) + 0.5f) / 2, 0.3f);
+        }
     }
 }
