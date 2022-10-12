@@ -14,12 +14,14 @@ public class Boss2D : MonoBehaviour
     but I don't think we need to do that at this scope. Attacks are just gonna be random or a sequence.
      */
     Animator animPlayer;
-    
-    private enum BehaviorResult { Success, Running, Failure};
+    SpriteRenderer sprite;
+
+    private enum BehaviorResult { Success, Running, Failure };
     BehaviorResult lastFrameResult = BehaviorResult.Success;
 
-    private enum Attack { None, SimpleBehavior};
-    Attack currentBehavior = Attack.None;
+    private enum Behavior { None, SimpleBehavior, SwordSlashes };
+    Behavior[] attackList = { Behavior.SwordSlashes }; //The behaviors that are attacks
+    Behavior currentBehavior = Behavior.None;
     public float attackInterval = 2.0f;
     float doNotAttackTill;
     private System.Random rng = new System.Random();
@@ -44,6 +46,7 @@ public class Boss2D : MonoBehaviour
     void Start()
     {
         animPlayer = gameObject.GetComponent<Animator>();
+        sprite = gameObject.GetComponent<SpriteRenderer>();
         doNotAttackTill = Time.time + attackInterval;
     }
 
@@ -56,20 +59,31 @@ public class Boss2D : MonoBehaviour
         //Special behavior may include simply moving to a new position, in which case they will not execute an attack until they have finished
         //moving, even if the attack interval is already finished (this does mean however they will attack the MOMENT they finish moving)
 
-        if(currentBehavior == Attack.None)
+        if(currentBehavior == Behavior.None)
         {
             if (Time.time >= doNotAttackTill)
-                currentBehavior = Attack.SimpleBehavior; //Replace w/ function that chooses an attack
+                currentBehavior = chooseAttack(); //Replace w/ function that chooses an attack
             else
             {
-                //Look at player?
+                //Look at player? (Only if not executing a behavior)
+                if(player.transform.position.x > gameObject.transform.position.x)
+                {
+                    sprite.flipX = false;
+                }
+                else
+                {
+                    sprite.flipX = true;
+                }
             }
         }
-        if(currentBehavior != Attack.None)
+        if(currentBehavior != Behavior.None)
         {
             switch (currentBehavior)
             {
-                case Attack.SimpleBehavior:
+                case Behavior.SimpleBehavior:
+                    lastFrameResult = simpleBehavior();
+                    break;
+                case Behavior.SwordSlashes:
                     lastFrameResult = swordSwipes(2, 6);
                     break;
                 default:
@@ -79,7 +93,7 @@ public class Boss2D : MonoBehaviour
             }
             if(lastFrameResult == BehaviorResult.Success || lastFrameResult == BehaviorResult.Failure)
             {
-                currentBehavior = Attack.None;
+                currentBehavior = Behavior.None;
                 doNotAttackTill = Time.time + attackInterval;
             }
         }
@@ -102,6 +116,13 @@ public class Boss2D : MonoBehaviour
             return BehaviorResult.Success;
         }
         return BehaviorResult.Running;
+    }
+
+    /*Randomly choose from the list of attacks. May want to modify later to give certain attacks
+     higher chances or whatever*/
+    Behavior chooseAttack()
+    {
+        return attackList[rng.Next(0, attackList.Length)];
     }
 
     BehaviorResult swordSwipes(int min, int max)
@@ -127,7 +148,7 @@ public class Boss2D : MonoBehaviour
             weaponRoot.transform.right = player.transform.position - gameObject.transform.position;
 
             repeatActionCounter = 0;
-            repeatThisMany = Mathf.FloorToInt(Random.Range(min, max));
+            repeatThisMany = Mathf.FloorToInt(rng.Next(min, max));
         }
 
         if(repeatActionCounter >= repeatThisMany)
@@ -165,10 +186,15 @@ public class Boss2D : MonoBehaviour
     //Called when sword slash anim finishes
     void finishedSwordSlash()
     {
-        Debug.Log("Finished sword slash animation");
+        //Debug.Log("Finished sword slash animation");
         repeatActionCounter += 1;
         swingingSword = false;
     }
 
     //Later when the boss is defeated or switches phase - whatever the current behavior is must be interrupted.
+
+    public void TakeDamage(int damage)
+    {
+        Debug.Log("Boss took " + damage + " damage!");
+    }
 }

@@ -25,7 +25,13 @@ public class Player2D : MonoBehaviour
     public GameObject weaponRoot;
     public GameObject projectileOrigin;
 
+    [Header("On-Hit stuff")]
+    public float iFrames = 1.0f;
+    float endiFrames = 0.0f;
+
+    [Header("Machine Gun bullets")]
     public Rigidbody2D bulletPrefab;
+    public int bulletDamage = 10;
     public float bulletSpeed = 16.0f;
 
     void Start()
@@ -43,6 +49,7 @@ public class Player2D : MonoBehaviour
 
         Rigidbody2D bulletInstance = Instantiate(bulletPrefab, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
         bulletInstance.velocity = weaponRoot.transform.right * bulletSpeed;
+        bulletInstance.gameObject.GetComponent<DamageBoss2D>().DamageToBoss = bulletDamage;
     }
 
     void OnMove(InputValue value)
@@ -107,6 +114,14 @@ public class Player2D : MonoBehaviour
     //To be called by trigger colliders that are meant to deal damage to the player (bullets, boss melee, etc)
     public void TakeDamage(int damage)
     {
-        Debug.Log("Player took " + damage + " damage!");
+        if(damage > -1 && Time.time >= endiFrames)
+        {
+            Debug.Log("Player took " + damage + " damage!");
+            endiFrames = Time.time + iFrames;
+        }
+        else if(damage < 0)
+        {
+            Debug.Log("Player took " + damage + " damage!");
+        }
     }
 }

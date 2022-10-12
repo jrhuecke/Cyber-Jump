@@ -30,7 +30,7 @@ public class BulletSpread2D : MonoBehaviour
 
         for(int i = 0; i < numOfBullets - 1; i++)
         {
-            Debug.Log("Spawned a bullet");
+            //Debug.Log("Spawned a bullet");
             rotator.transform.Rotate(new Vector3(0, 0, amountToRotate));
 
             Rigidbody2D newBullet = Instantiate(bullet, gameObject.transform);
