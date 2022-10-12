@@ -975,7 +975,7 @@ MonoBehaviour:
   bulletDamage: 10
   bulletSpeed: 16
   rateOfFireMG: 0.166
-  randomSpreadMG: 4
+  randomSpreadMG: 15
 --- !u!1 &1437578309
 GameObject:
   m_ObjectHideFlags: 0
