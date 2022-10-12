@@ -173,36 +173,8 @@ public class Boss3D : MonoBehaviour
         
         }
         else {
-            bossQ.Enqueue(Attack.Missiles);
+            bossQ.Enqueue(Attack.Laser);
         }
-
-        //old 1-7 rng 
-       /* switch(pick){
-            case 1: 
-                bossQ.Enqueue(Attack.Gun);
-                return;
-            case 2:
-                bossQ.Enqueue(Attack.Charge);
-                return;
-            case 3: 
-                bossQ.Enqueue(Attack.TurnAround);
-                return;
-            case 4:
-                bossQ.Enqueue(Attack.Missiles);
-                return;
-            case 5: 
-                bossQ.Enqueue(Attack.Laser);
-                return;
-            case 6:
-                bossQ.Enqueue(Attack.Charge);
-                bossQ.Enqueue(Attack.TurnAround);
-                return;
-            case 7:
-                bossQ.Enqueue(Attack.Laser);
-                bossQ.Enqueue(Attack.Gun);
-                bossQ.Enqueue(Attack.Missiles);
-                return;
-        } */
     }
 
     void Gun(){
