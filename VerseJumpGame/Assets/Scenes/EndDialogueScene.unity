@@ -918,7 +918,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2035987252}
-  - component: {fileID: 2035987254}
+  - component: {fileID: 2035987253}
   m_Layer: 0
   m_Name: Dialogue Text
   m_TagString: Untagged
@@ -941,7 +941,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2035987254
+--- !u!114 &2035987253
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -950,7 +950,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2035987249}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 725112d027f33e246ad0522027ec199c, type: 3}
+  m_Script: {fileID: 11500000, guid: 926551c091d073e4094198fbf04cfb6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Anita:
@@ -960,19 +960,17 @@ MonoBehaviour:
     characterName: 
     root: {fileID: 0}
   speech:
-  - Where am I? What happened?
+  - Purr-fect. I believe you are ready.
   speech2:
-  - Welcome, Anita Gunn.
-  - I am Rupaw and I will be your fur-end in this Cyberspace.
+  - Finally! What now?
   bothtext:
-  - Cyberspace what are you talking about? How do you know my name?:Anita
-  - Also, are you a cat?
-  - All will become fur-miliar in due time.:RuPaw
-  - I assume you still remember how to use your paw-some weapon. Am I correct?
-  - Yea. I think so.:Anita
-  - Good. Good. We are not starting from scratch but I would still like to test your
-    abilities for myself.:Rupaw
-  - What?:Anita
-  - Purr-pare yourself Anita Gunn for I must see if you have what it takes to survive
-    in this world!:RuPaw
-  - Wait a minute!:Anita
+  - Now we see you will face the real deal.:RuPaw
+  - I will accompany you as you journey through this cyberspace. Saving this place
+    from the invading malware sent to destroy it.
+  - "You were trained to be this place\u2019s protector, that\u2019s all I know about
+    you specifically. There is a paw-sibility you might remember more but...:RuPaw"
+  - "No need to explain further. There\u2019s no point in wondering, it won\u2019t
+    help the situation we\u2019re currently in.:Anita"
+  - "Anyways. I guess it\u2019s time to move\u2026"
+  - Fur-ward.
+  - "Nya-hahahahaha now you\u2019re getting it!:RuPaw"

@@ -918,7 +918,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2035987252}
-  - component: {fileID: 2035987254}
+  - component: {fileID: 2035987253}
   m_Layer: 0
   m_Name: Dialogue Text
   m_TagString: Untagged
@@ -941,7 +941,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2035987254
+--- !u!114 &2035987253
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -950,7 +950,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2035987249}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 725112d027f33e246ad0522027ec199c, type: 3}
+  m_Script: {fileID: 11500000, guid: d1ac226c101b0114bbdc349aec3045de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Anita:
@@ -960,19 +960,19 @@ MonoBehaviour:
     characterName: 
     root: {fileID: 0}
   speech:
-  - Where am I? What happened?
+  - "Ok\u2026 are we done now?"
+  - Can you please explain to me what is going on?
   speech2:
-  - Welcome, Anita Gunn.
-  - I am Rupaw and I will be your fur-end in this Cyberspace.
+  - We are not finished yet Anita.
   bothtext:
-  - Cyberspace what are you talking about? How do you know my name?:Anita
-  - Also, are you a cat?
-  - All will become fur-miliar in due time.:RuPaw
-  - I assume you still remember how to use your paw-some weapon. Am I correct?
-  - Yea. I think so.:Anita
-  - Good. Good. We are not starting from scratch but I would still like to test your
-    abilities for myself.:Rupaw
-  - What?:Anita
-  - Purr-pare yourself Anita Gunn for I must see if you have what it takes to survive
-    in this world!:RuPaw
-  - Wait a minute!:Anita
+  - "What do you mean we\u2019re not finished yet? I beat you.:Anita"
+  - What more is there to do?
+  - "Here in Cyberspace, viruses attack in many different forms and ways than what
+    you're familiar with. It\u2019s un-fur-tunate but it\u2019s the life we live.:RuPaw"
+  - Viruses? So Viruses would be attacking me in here.:Anita
+  - Yes. As I said before, more will be revealed in time so keep the questions to
+    a meow-nimum.:RuPaw
+  - Ok. So what are we going to do?:Rupaw
+  - The device on your stomach will allow us to travel to where we need to go. Whenever
+    you are ready, purr-ess the button and we will begin.:RuPaw
+  - "Okay. Let\u2019s get this done with.:Anita"
