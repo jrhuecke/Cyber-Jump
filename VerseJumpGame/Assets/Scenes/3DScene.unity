@@ -1300,7 +1300,7 @@ GameObject:
   - component: {fileID: 1188600126}
   - component: {fileID: 1188600125}
   - component: {fileID: 1188600128}
-  m_Layer: 12
+  m_Layer: 7
   m_Name: Weak Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
