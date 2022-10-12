@@ -10,26 +10,34 @@ update will pop off the queue every time the boss is able to perform an attack, 
 
 public class Boss3D : MonoBehaviour
 {
+    private System.Random rng = new System.Random();
+    private enum Attack{
+        GUN, 
+        CHARGE,
+        SPIN, 
+        MISSILE,
+        LASER
+    };
+
+    private Queue<Attack> bossQ;
+    [SerializeField] int bossMaxHealth = 1000;
+    private int bossCurrHealth;
+    [SerializeField] int playerBulletDamage = 2;
+    [SerializeField] float attackRate = 3.0f; //at minimum 3 sec delay between attacks
+    private float nextAttack; //used to calculate when boss can begin next attack
+    private bool attacking = false; //is the boss currently in an attack animation
+    private bool passiveTracking = true; //boss constantly turns to look at player if true.
+
     [SerializeField] int gunShots = 3; //# of machine gun shots
     [SerializeField] float bulletSpeed = 30f; //machine gun bullet speed
     [SerializeField] float shotInterval = 0.3f;
     private int fired; //track bullets fired and stop if it is >= gunshots
 
-    private System.Random rng = new System.Random();
-    private enum Attack{Gun, Charge, TurnAround, Missiles, Laser};
-    private Queue<Attack> bossQ;
-    [SerializeField] float attackRate = 3.0f; //at minimum 3 sec delay between attacks
-    private float nextAttack; //used to calculate when boss can begin next attack
-    private bool attacking = false; //is the boss currently in an attack animation
-
-    private bool passiveTracking = true; //boss constantly turns to look at player if true.
-    private bool isSpinning = false;
+   
     private float spinTime = 0f;
     [SerializeField] float spinDuration = 1f;
     private float spinSpeed;
 
-    private bool isCharging = false;
-    private bool boostingUp = false;
     private float chargeTime = 0f;
     private Transform targetDest;
     private float dist;
@@ -37,12 +45,30 @@ public class Boss3D : MonoBehaviour
     [SerializeField] float boostDuration = 0.5f;
     [SerializeField] float chargeDuration = 2f;
 
+    private float laserTime = 0f;
+    [SerializeField] float laserChargeDuration = 1f;
+
     public GameObject bulletPrefab;
     private Collider bulletColl;
     private Rigidbody bulletRB;
     public GameObject player;
     public GameObject projectileOrigin;
     public GameObject sword;
+    public GameObject swordHitbox;
+    public GameObject laser;
+    public GameObject laserCharge;
+    public GameObject weakPoint;
+
+    private enum State {
+        CHARGE,
+        BOOST_UP,
+        SPIN,
+        LASER_CHARGE,
+        LASER_FIRE,
+        IDLE
+    };
+
+    State state;
 
     // Start is called before the first frame update
     void Start()
@@ -53,9 +79,17 @@ public class Boss3D : MonoBehaviour
         bulletRB = bulletPrefab.GetComponent<Rigidbody>();
         bulletColl = bulletPrefab.GetComponent<Collider>();
 
-        Physics.IgnoreCollision(bulletColl, gameObject.GetComponent<Collider>());
+        //Physics.IgnoreCollision(bulletColl, gameObject.GetComponent<Collider>());
         spinSpeed = (360/spinDuration);
         Debug.Log(spinSpeed);
+
+        state = State.IDLE;
+
+        laser.SetActive(false);
+        laserCharge.SetActive(false);
+        swordHitbox.SetActive(false);
+
+        bossCurrHealth = bossMaxHealth;
 
     }
 
@@ -65,43 +99,82 @@ public class Boss3D : MonoBehaviour
         //boss looking at player when enabled
         if (passiveTracking) {gameObject.transform.LookAt(player.transform.position);}
 
-        //boss is spinning for turn attack when enabled
-        if(isSpinning) {
-            gameObject.transform.RotateAround(gameObject.transform.position, Vector3.up, spinSpeed * Time.deltaTime);
-            if (Time.time >= spinTime + spinDuration) {
-                isSpinning = false;
-                sword.transform.Rotate(-90, 0, 0);
-                attacking = false;
-                passiveTracking = true;
-            }
+        //boss attack state machine
+        switch(state) {
+            default:
+                state = State.IDLE;
+                break;
+
+            case State.IDLE:
+                break;
+
+            case State.CHARGE:
+                if(Time.time <= chargeTime + boostDuration + chargeDuration) {
+                    gameObject.transform.Translate(Vector3.forward * Time.deltaTime * (dist/chargeDuration));
+                }
+                else{
+                    state = State.IDLE;
+                    attacking = false;
+                    gameObject.transform.SetPositionAndRotation(new Vector3(
+                        gameObject.transform.position.x, 3, gameObject.transform.position.z),
+                        gameObject.transform.rotation);
+                    passiveTracking = true;
+                }
+                break;
+
+            case State.BOOST_UP:
+                if(Time.time <= chargeTime + boostDuration) {
+                    gameObject.transform.Translate(Vector3.up * Time.deltaTime * (boostHeight/boostDuration), Space.World);
+                }
+                else {
+                    state = State.CHARGE;
+                    dist = Vector3.Distance(targetDest.position, gameObject.transform.position);
+                }
+                break;
+
+            case State.SPIN:
+                swordHitbox.SetActive(true);
+                gameObject.transform.RotateAround(gameObject.transform.position, Vector3.up, spinSpeed * Time.deltaTime);
+                if (Time.time >= spinTime + spinDuration) {
+                    state = State.IDLE;
+                    sword.transform.Rotate(-90, 0, 0);
+                    attacking = false;
+                    passiveTracking = true;
+                    swordHitbox.SetActive(false);
+                }
+                break;
+
+            case State.LASER_CHARGE:
+                laserCharge.SetActive(true);
+                if(Time.time < laserTime + (laserChargeDuration/3)) {
+                    laserCharge.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                }
+                else if(Time.time >= laserTime + (laserChargeDuration/3) && Time.time < laserTime + 2*(laserChargeDuration/3)) {
+                    laserCharge.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+                }
+                else {
+                    laserCharge.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+                }
+                if(Time.time >= laserTime + laserChargeDuration) {
+                    laserCharge.SetActive(false);
+                    state = State.LASER_FIRE;
+                }
+                break;
+                
+            case State.LASER_FIRE:
+                if(Time.time < laserTime + laserChargeDuration + 0.35f) {
+                    laser.SetActive(true);
+                }
+                else {
+                    laser.SetActive(false);
+                    state = State.IDLE;
+                    attacking = false;
+                }
+                break;
         }
 
-        if(boostingUp) {
-            if(Time.time <= chargeTime + boostDuration) {
-                gameObject.transform.Translate(Vector3.up * Time.deltaTime * (boostHeight/boostDuration), Space.World);
-            }
-            else {
-                boostingUp = false;
-                isCharging = true;
-                dist = Vector3.Distance(targetDest.position, gameObject.transform.position);
-            }
 
-        }
-        if(isCharging) {
-            if(Time.time <= chargeTime + boostDuration + chargeDuration) {
-                gameObject.transform.Translate(Vector3.forward * Time.deltaTime * (dist/chargeDuration));
-            }
-            else{
-                isCharging = false;
-                attacking = false;
-                gameObject.transform.SetPositionAndRotation(new Vector3(
-                    gameObject.transform.position.x, 3, gameObject.transform.position.z),
-                    gameObject.transform.rotation);
-                passiveTracking = true;
-            }
-        }
-
-        //tracking projectile origin to aim at player
+        //tracking projectile origin to aim at player (happens always)
         projectileOrigin.transform.LookAt(player.transform.position);
 
         //execute the next attack in the queue
@@ -111,21 +184,21 @@ public class Boss3D : MonoBehaviour
                 nextAttack = Time.time + attackRate;
                 Attack curr = bossQ.Dequeue();
                 switch(curr) {
-                    case Attack.Gun:
+                    case Attack.GUN:
                         Debug.Log("Gun!");
                         fired = 0;
                         InvokeRepeating("Gun", 0, shotInterval);
                         break;
-                    case Attack.Charge:
+                    case Attack.CHARGE:
                         Charge();
                         break;
-                    case Attack.TurnAround:
-                        TurnAround();
+                    case Attack.SPIN:
+                        Spin();
                         break;
-                    case Attack.Missiles:
+                    case Attack.MISSILE:
                         Missiles();
                         break;
-                    case Attack.Laser:
+                    case Attack.LASER:
                         Laser();
                         break;
                     default: 
@@ -141,9 +214,26 @@ public class Boss3D : MonoBehaviour
         }
     }
 
-    void TakeDamage() {
-       Debug.Log("Boss took damage"); 
+    public void OnNormTriggerEnter(OnTriggerDelegation delegation) { 
+        if ((delegation.Other.gameObject.layer == 8 || delegation.Other.gameObject.layer == 11)) {
+            bossCurrHealth -= playerBulletDamage;
+            Debug.Log("Damage taken! HP: " + bossCurrHealth + "/" + bossMaxHealth);
+        }
     }
+
+    public void OnWeakTriggerEnter(OnTriggerDelegation delegation) {
+        bossCurrHealth -= playerBulletDamage *2;
+        Debug.Log("Weak Point Hit! HP: " + bossCurrHealth+ "/" + bossMaxHealth);
+
+        if(state == State.LASER_CHARGE) {
+            state = State.IDLE;
+            laserCharge.SetActive(false);
+            laser.SetActive(false);
+            attacking = false;
+            Debug.Log("LASER CHARGE CANCELLED!");
+            }
+    }
+
 
     //attack selection ai
     void SelectAttack() {
@@ -152,64 +242,35 @@ public class Boss3D : MonoBehaviour
         if(pick < 55) {
             Debug.Log(Vector3.Distance(gameObject.transform.position, player.transform.position));
             if(Vector3.Distance(gameObject.transform.position, player.transform.position) < 6.8f) {
-                bossQ.Enqueue(Attack.TurnAround);
+                bossQ.Enqueue(Attack.SPIN);
             }
             else{
-                bossQ.Enqueue(Attack.Gun);
+                bossQ.Enqueue(Attack.GUN);
             }
         }
         else if(pick >= 55 && pick < 75) {
-            bossQ.Enqueue(Attack.Charge);
-            bossQ.Enqueue(Attack.TurnAround);
+            bossQ.Enqueue(Attack.CHARGE);
+            bossQ.Enqueue(Attack.SPIN);
         }
         else if(pick >= 75 && pick < 90) {
             Debug.Log(Vector3.Distance(gameObject.transform.position, player.transform.position));
             if(Vector3.Distance(gameObject.transform.position, player.transform.position) < 6.8f) {
-                bossQ.Enqueue(Attack.TurnAround);
+                bossQ.Enqueue(Attack.SPIN);
             }
             else{
-                bossQ.Enqueue(Attack.Laser);
+                bossQ.Enqueue(Attack.LASER);
             }
         
         }
         else {
-            bossQ.Enqueue(Attack.Missiles);
+            bossQ.Enqueue(Attack.LASER);
         }
-
-        //old 1-7 rng 
-       /* switch(pick){
-            case 1: 
-                bossQ.Enqueue(Attack.Gun);
-                return;
-            case 2:
-                bossQ.Enqueue(Attack.Charge);
-                return;
-            case 3: 
-                bossQ.Enqueue(Attack.TurnAround);
-                return;
-            case 4:
-                bossQ.Enqueue(Attack.Missiles);
-                return;
-            case 5: 
-                bossQ.Enqueue(Attack.Laser);
-                return;
-            case 6:
-                bossQ.Enqueue(Attack.Charge);
-                bossQ.Enqueue(Attack.TurnAround);
-                return;
-            case 7:
-                bossQ.Enqueue(Attack.Laser);
-                bossQ.Enqueue(Attack.Gun);
-                bossQ.Enqueue(Attack.Missiles);
-                return;
-        } */
     }
 
     void Gun(){
         if(fired < gunShots) {
             Rigidbody bulletInstance = Instantiate(bulletRB, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
             bulletInstance.velocity = projectileOrigin.transform.forward * bulletSpeed;
-            Debug.Log("pew");
             attacking = true;
             fired += 1;
         }
@@ -218,31 +279,37 @@ public class Boss3D : MonoBehaviour
             attacking = false;
         }
     }
+
     void Charge(){
         Debug.Log("Charge!");
         attacking = true;
-        boostingUp = true;
+        state = State.BOOST_UP;
         chargeTime = Time.time;
         passiveTracking = false;
         targetDest = player.transform;
         gameObject.transform.LookAt(player.transform.position);
         
     }
-    void TurnAround(){
-        Debug.Log("TurnAround!");
+
+    void Spin(){
+        Debug.Log("Spin!");
         passiveTracking = false;
         sword.transform.Rotate(90,0,0);
         spinTime = Time.time;
-        isSpinning = true;
+        state = State.SPIN;
         
     }
+
     void Missiles(){
         Debug.Log("Missiles!");
         attacking = false;
     }
+
     void Laser(){
         Debug.Log("Laser!");
-        attacking = false;
+        attacking = true;
+        laserTime = Time.time;
+        state = State.LASER_CHARGE;
     }
 
 }
