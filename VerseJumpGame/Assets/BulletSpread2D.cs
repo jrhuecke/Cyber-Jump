@@ -8,7 +8,7 @@ public class BulletSpread2D : MonoBehaviour
 
     public GameObject rotator;
     public Rigidbody2D bullet;
-    public int bulletSpeed = 9;
+    public float bulletSpeed = 9;
     public int numOfBullets = 9;
     public float sphereRadius = 2.0f;
     public float spreadSize = 60.0f; //Size of the spread in degrees

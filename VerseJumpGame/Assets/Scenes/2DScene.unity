@@ -382,9 +382,10 @@ MonoBehaviour:
   weaponRoot: {fileID: 365801356}
   player: {fileID: 1201217393}
   bulletSpread: {fileID: 7593238063794445221, guid: 29f42febefd64074cbeb06da3d97af21, type: 3}
+  bulletSpreadSpeed: 6
   bulletSpeadCountOdd: 9
   spreadSphereRadius: 2
-  spreadSize: 120
+  spreadSize: 144
 --- !u!95 &563993637
 Animator:
   serializedVersion: 4

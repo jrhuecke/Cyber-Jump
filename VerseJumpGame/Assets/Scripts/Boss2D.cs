@@ -22,6 +22,7 @@ public class Boss2D : MonoBehaviour
     Attack currentBehavior = Attack.None;
     public float attackInterval = 2.0f;
     float doNotAttackTill;
+    private System.Random rng = new System.Random();
 
     //"Blackboard" or variables that are used by behaviors
     public GameObject weaponRoot;
@@ -32,7 +33,9 @@ public class Boss2D : MonoBehaviour
     int repeatThisMany = 0;
     bool swingingSword = false;
 
+    [Header("Sword Slash")]
     public BulletSpread2D bulletSpread;
+    public float bulletSpreadSpeed = 6.0f;
     public int bulletSpeadCountOdd = 9;
     public float spreadSphereRadius = 2.0f;
     public float spreadSize = 120.0f;
@@ -67,7 +70,7 @@ public class Boss2D : MonoBehaviour
             switch (currentBehavior)
             {
                 case Attack.SimpleBehavior:
-                    lastFrameResult = swordSwipes();
+                    lastFrameResult = swordSwipes(2, 6);
                     break;
                 default:
                     lastFrameResult = BehaviorResult.Failure;
@@ -101,7 +104,7 @@ public class Boss2D : MonoBehaviour
         return BehaviorResult.Running;
     }
 
-    BehaviorResult swordSwipes()
+    BehaviorResult swordSwipes(int min, int max)
     {
         /*
          * Start:
@@ -113,6 +116,9 @@ public class Boss2D : MonoBehaviour
          *      return sword to starting position
          *      return SUCCESS
          */
+        //PROBLEM: The alternative slash doesn't space the bullets evenly between the bullets from the first slash, but I'll fix this later
+        //I'd have to move the first bullet by a certain amount then double up the amount on the following bullets
+        //Would prob be best to just create another bullet spread object
 
         //First time call
         if(lastFrameResult != BehaviorResult.Running)
@@ -121,7 +127,7 @@ public class Boss2D : MonoBehaviour
             weaponRoot.transform.right = player.transform.position - gameObject.transform.position;
 
             repeatActionCounter = 0;
-            repeatThisMany = 3; //Choose random # of times to slash
+            repeatThisMany = Mathf.FloorToInt(Random.Range(min, max));
         }
 
         if(repeatActionCounter >= repeatThisMany)
@@ -135,18 +141,19 @@ public class Boss2D : MonoBehaviour
             {
                 animPlayer.Play("BossSwingSwordLeftRight", -1, 0);
                 BulletSpread2D bulletSpreadOdd = Instantiate(bulletSpread, weaponRoot.transform);
-                bulletSpreadOdd.bulletSpeed = 9;
+                bulletSpreadOdd.bulletSpeed = bulletSpreadSpeed;
                 bulletSpreadOdd.numOfBullets = bulletSpeadCountOdd;
-                bulletSpreadOdd.sphereRadius = 2.0f;
-                bulletSpreadOdd.spreadSize = 120.0f;
-
-
-                //Why does it think the weapon root is not centered on the boss? (But still has the sword slash behave as intneded?)
-                //Why does the bullet spread spawn way behind the weaponRoot?
+                bulletSpreadOdd.sphereRadius = spreadSphereRadius;
+                bulletSpreadOdd.spreadSize = spreadSize;
             }
             else
             {
                 animPlayer.Play("BossSwingSwordRightLeft", -1, 0);
+                BulletSpread2D bulletSpreadEven = Instantiate(bulletSpread, weaponRoot.transform);
+                bulletSpreadEven.bulletSpeed = bulletSpreadSpeed;
+                bulletSpreadEven.numOfBullets = bulletSpeadCountOdd - 1;
+                bulletSpreadEven.sphereRadius = spreadSphereRadius;
+                bulletSpreadEven.spreadSize = spreadSize;
             }
             //To create the bullets: spawn a group of bullets around the boss that are evenly spaced between each other
             swingingSword = true;
