@@ -22,6 +22,9 @@ public class Player3D : MonoBehaviour
 
     //Health variables
     public float playerHealth3D = 100f;
+    public float bulletDamage = 20f;
+    public float invulnerability = 1f;
+    private float invulnerabilityTimer;
 
     //Jumping/falling variables
     public Transform groundCheck;
@@ -82,9 +85,16 @@ public class Player3D : MonoBehaviour
             controller.Move(velocity * Time.deltaTime);
         }
 
+        //cooldown between bullets
         if (bulletCooldownTimer > 0)
         {
             bulletCooldownTimer -= Time.deltaTime;
+        }
+
+        //Invuln time after taking damage cooldown
+        if (invulnerabilityTimer > 0)
+        {
+            invulnerabilityTimer -= Time.deltaTime;
         }
 
         //state machine for player's shooting
@@ -208,6 +218,16 @@ public class Player3D : MonoBehaviour
             bulletOrigin.LookAt(target.point);
             laserObject.transform.localPosition = new Vector3(0f, 0f, Mathf.Abs((Vector3.Distance(bulletOrigin.position, target.point)) + 0.5f) / 2);
             laserObject.transform.localScale = new Vector3(0.3f, Mathf.Abs((Vector3.Distance(bulletOrigin.position, target.point)) + 0.5f) / 2, 0.3f);
+        }
+    }
+
+    //Checks for boss attacks hitting player
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == 9 && invulnerabilityTimer <= 0)
+        {
+            invulnerabilityTimer = invulnerability;
+            playerHealth3D -= bulletDamage;
         }
     }
 }
