@@ -10,26 +10,33 @@ update will pop off the queue every time the boss is able to perform an attack, 
 
 public class Boss3D : MonoBehaviour
 {
+    private System.Random rng = new System.Random();
+    private enum Attack{
+        GUN, 
+        CHARGE,
+        SPIN, 
+        MISSILE,
+        LASER
+    };
+
+    private Queue<Attack> bossQ;
+    [SerializeField] float attackRate = 3.0f; //at minimum 3 sec delay between attacks
+    private float nextAttack; //used to calculate when boss can begin next attack
+    private bool attacking = false; //is the boss currently in an attack animation
+    private bool passiveTracking = true; //boss constantly turns to look at player if true.
+
     [SerializeField] int gunShots = 3; //# of machine gun shots
     [SerializeField] float bulletSpeed = 30f; //machine gun bullet speed
     [SerializeField] float shotInterval = 0.3f;
     private int fired; //track bullets fired and stop if it is >= gunshots
 
-    private System.Random rng = new System.Random();
-    private enum Attack{Gun, Charge, TurnAround, Missiles, Laser};
-    private Queue<Attack> bossQ;
-    [SerializeField] float attackRate = 3.0f; //at minimum 3 sec delay between attacks
-    private float nextAttack; //used to calculate when boss can begin next attack
-    private bool attacking = false; //is the boss currently in an attack animation
-
-    private bool passiveTracking = true; //boss constantly turns to look at player if true.
-    private bool isSpinning = false;
+    //private bool isSpinning = false;
     private float spinTime = 0f;
     [SerializeField] float spinDuration = 1f;
     private float spinSpeed;
 
-    private bool isCharging = false;
-    private bool boostingUp = false;
+    //private bool isCharging = false;
+    //private bool boostingUp = false;
     private float chargeTime = 0f;
     private Transform targetDest;
     private float dist;
@@ -44,6 +51,17 @@ public class Boss3D : MonoBehaviour
     public GameObject projectileOrigin;
     public GameObject sword;
 
+    private enum State {
+        CHARGE,
+        BOOST_UP,
+        SPIN,
+        LASER_CHARGE,
+        LASER_FIRE,
+        IDLE
+    };
+
+    State state;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,6 +75,8 @@ public class Boss3D : MonoBehaviour
         spinSpeed = (360/spinDuration);
         Debug.Log(spinSpeed);
 
+        state = State.IDLE;
+
     }
 
     // Update is called once per frame
@@ -65,43 +85,58 @@ public class Boss3D : MonoBehaviour
         //boss looking at player when enabled
         if (passiveTracking) {gameObject.transform.LookAt(player.transform.position);}
 
-        //boss is spinning for turn attack when enabled
-        if(isSpinning) {
-            gameObject.transform.RotateAround(gameObject.transform.position, Vector3.up, spinSpeed * Time.deltaTime);
-            if (Time.time >= spinTime + spinDuration) {
-                isSpinning = false;
-                sword.transform.Rotate(-90, 0, 0);
-                attacking = false;
-                passiveTracking = true;
-            }
+        //boss attack state machine
+        switch(state) {
+            default:
+                state = State.IDLE;
+                break;
+
+            case State.IDLE:
+                break;
+
+            case State.CHARGE:
+                if(Time.time <= chargeTime + boostDuration + chargeDuration) {
+                    gameObject.transform.Translate(Vector3.forward * Time.deltaTime * (dist/chargeDuration));
+                }
+                else{
+                    state = State.IDLE;
+                    attacking = false;
+                    gameObject.transform.SetPositionAndRotation(new Vector3(
+                        gameObject.transform.position.x, 3, gameObject.transform.position.z),
+                        gameObject.transform.rotation);
+                    passiveTracking = true;
+                }
+                break;
+
+            case State.BOOST_UP:
+                if(Time.time <= chargeTime + boostDuration) {
+                    gameObject.transform.Translate(Vector3.up * Time.deltaTime * (boostHeight/boostDuration), Space.World);
+                }
+                else {
+                    state = State.CHARGE;
+                    dist = Vector3.Distance(targetDest.position, gameObject.transform.position);
+                }
+                break;
+
+            case State.SPIN:
+                gameObject.transform.RotateAround(gameObject.transform.position, Vector3.up, spinSpeed * Time.deltaTime);
+                if (Time.time >= spinTime + spinDuration) {
+                    state = State.IDLE;
+                    sword.transform.Rotate(-90, 0, 0);
+                    attacking = false;
+                    passiveTracking = true;
+                }
+                break;
+
+            case State.LASER_CHARGE:
+                break;
+                
+            case State.LASER_FIRE:
+                break;
         }
 
-        if(boostingUp) {
-            if(Time.time <= chargeTime + boostDuration) {
-                gameObject.transform.Translate(Vector3.up * Time.deltaTime * (boostHeight/boostDuration), Space.World);
-            }
-            else {
-                boostingUp = false;
-                isCharging = true;
-                dist = Vector3.Distance(targetDest.position, gameObject.transform.position);
-            }
 
-        }
-        if(isCharging) {
-            if(Time.time <= chargeTime + boostDuration + chargeDuration) {
-                gameObject.transform.Translate(Vector3.forward * Time.deltaTime * (dist/chargeDuration));
-            }
-            else{
-                isCharging = false;
-                attacking = false;
-                gameObject.transform.SetPositionAndRotation(new Vector3(
-                    gameObject.transform.position.x, 3, gameObject.transform.position.z),
-                    gameObject.transform.rotation);
-                passiveTracking = true;
-            }
-        }
-
-        //tracking projectile origin to aim at player
+        //tracking projectile origin to aim at player (happens always)
         projectileOrigin.transform.LookAt(player.transform.position);
 
         //execute the next attack in the queue
@@ -111,21 +146,21 @@ public class Boss3D : MonoBehaviour
                 nextAttack = Time.time + attackRate;
                 Attack curr = bossQ.Dequeue();
                 switch(curr) {
-                    case Attack.Gun:
+                    case Attack.GUN:
                         Debug.Log("Gun!");
                         fired = 0;
                         InvokeRepeating("Gun", 0, shotInterval);
                         break;
-                    case Attack.Charge:
+                    case Attack.CHARGE:
                         Charge();
                         break;
-                    case Attack.TurnAround:
-                        TurnAround();
+                    case Attack.SPIN:
+                        Spin();
                         break;
-                    case Attack.Missiles:
+                    case Attack.MISSILE:
                         Missiles();
                         break;
-                    case Attack.Laser:
+                    case Attack.LASER:
                         Laser();
                         break;
                     default: 
@@ -152,28 +187,28 @@ public class Boss3D : MonoBehaviour
         if(pick < 55) {
             Debug.Log(Vector3.Distance(gameObject.transform.position, player.transform.position));
             if(Vector3.Distance(gameObject.transform.position, player.transform.position) < 6.8f) {
-                bossQ.Enqueue(Attack.TurnAround);
+                bossQ.Enqueue(Attack.SPIN);
             }
             else{
-                bossQ.Enqueue(Attack.Gun);
+                bossQ.Enqueue(Attack.GUN);
             }
         }
         else if(pick >= 55 && pick < 75) {
-            bossQ.Enqueue(Attack.Charge);
-            bossQ.Enqueue(Attack.TurnAround);
+            bossQ.Enqueue(Attack.CHARGE);
+            bossQ.Enqueue(Attack.SPIN);
         }
         else if(pick >= 75 && pick < 90) {
             Debug.Log(Vector3.Distance(gameObject.transform.position, player.transform.position));
             if(Vector3.Distance(gameObject.transform.position, player.transform.position) < 6.8f) {
-                bossQ.Enqueue(Attack.TurnAround);
+                bossQ.Enqueue(Attack.SPIN);
             }
             else{
-                bossQ.Enqueue(Attack.Laser);
+                bossQ.Enqueue(Attack.LASER);
             }
         
         }
         else {
-            bossQ.Enqueue(Attack.Laser);
+            bossQ.Enqueue(Attack.LASER);
         }
     }
 
@@ -190,28 +225,32 @@ public class Boss3D : MonoBehaviour
             attacking = false;
         }
     }
+
     void Charge(){
         Debug.Log("Charge!");
         attacking = true;
-        boostingUp = true;
+        state = State.BOOST_UP;
         chargeTime = Time.time;
         passiveTracking = false;
         targetDest = player.transform;
         gameObject.transform.LookAt(player.transform.position);
         
     }
-    void TurnAround(){
-        Debug.Log("TurnAround!");
+
+    void Spin(){
+        Debug.Log("Spin!");
         passiveTracking = false;
         sword.transform.Rotate(90,0,0);
         spinTime = Time.time;
-        isSpinning = true;
+        state = State.SPIN;
         
     }
+
     void Missiles(){
         Debug.Log("Missiles!");
         attacking = false;
     }
+
     void Laser(){
         Debug.Log("Laser!");
         attacking = false;
