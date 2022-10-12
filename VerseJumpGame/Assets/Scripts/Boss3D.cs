@@ -20,6 +20,9 @@ public class Boss3D : MonoBehaviour
     };
 
     private Queue<Attack> bossQ;
+    [SerializeField] int bossMaxHealth = 1000;
+    private int bossCurrHealth;
+    [SerializeField] int playerBulletDamage = 2;
     [SerializeField] float attackRate = 3.0f; //at minimum 3 sec delay between attacks
     private float nextAttack; //used to calculate when boss can begin next attack
     private bool attacking = false; //is the boss currently in an attack animation
@@ -30,13 +33,11 @@ public class Boss3D : MonoBehaviour
     [SerializeField] float shotInterval = 0.3f;
     private int fired; //track bullets fired and stop if it is >= gunshots
 
-    //private bool isSpinning = false;
+   
     private float spinTime = 0f;
     [SerializeField] float spinDuration = 1f;
     private float spinSpeed;
 
-    //private bool isCharging = false;
-    //private bool boostingUp = false;
     private float chargeTime = 0f;
     private Transform targetDest;
     private float dist;
@@ -44,12 +45,19 @@ public class Boss3D : MonoBehaviour
     [SerializeField] float boostDuration = 0.5f;
     [SerializeField] float chargeDuration = 2f;
 
+    private float laserTime = 0f;
+    [SerializeField] float laserChargeDuration = 1f;
+
     public GameObject bulletPrefab;
     private Collider bulletColl;
     private Rigidbody bulletRB;
     public GameObject player;
     public GameObject projectileOrigin;
     public GameObject sword;
+    public GameObject swordHitbox;
+    public GameObject laser;
+    public GameObject laserCharge;
+    public GameObject weakPoint;
 
     private enum State {
         CHARGE,
@@ -71,11 +79,17 @@ public class Boss3D : MonoBehaviour
         bulletRB = bulletPrefab.GetComponent<Rigidbody>();
         bulletColl = bulletPrefab.GetComponent<Collider>();
 
-        Physics.IgnoreCollision(bulletColl, gameObject.GetComponent<Collider>());
+        //Physics.IgnoreCollision(bulletColl, gameObject.GetComponent<Collider>());
         spinSpeed = (360/spinDuration);
         Debug.Log(spinSpeed);
 
         state = State.IDLE;
+
+        laser.SetActive(false);
+        laserCharge.SetActive(false);
+        swordHitbox.SetActive(false);
+
+        bossCurrHealth = bossMaxHealth;
 
     }
 
@@ -119,19 +133,43 @@ public class Boss3D : MonoBehaviour
                 break;
 
             case State.SPIN:
+                swordHitbox.SetActive(true);
                 gameObject.transform.RotateAround(gameObject.transform.position, Vector3.up, spinSpeed * Time.deltaTime);
                 if (Time.time >= spinTime + spinDuration) {
                     state = State.IDLE;
                     sword.transform.Rotate(-90, 0, 0);
                     attacking = false;
                     passiveTracking = true;
+                    swordHitbox.SetActive(false);
                 }
                 break;
 
             case State.LASER_CHARGE:
+                laserCharge.SetActive(true);
+                if(Time.time < laserTime + (laserChargeDuration/3)) {
+                    laserCharge.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+                }
+                else if(Time.time >= laserTime + (laserChargeDuration/3) && Time.time < laserTime + 2*(laserChargeDuration/3)) {
+                    laserCharge.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+                }
+                else {
+                    laserCharge.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+                }
+                if(Time.time >= laserTime + laserChargeDuration) {
+                    laserCharge.SetActive(false);
+                    state = State.LASER_FIRE;
+                }
                 break;
                 
             case State.LASER_FIRE:
+                if(Time.time < laserTime + laserChargeDuration + 0.35f) {
+                    laser.SetActive(true);
+                }
+                else {
+                    laser.SetActive(false);
+                    state = State.IDLE;
+                    attacking = false;
+                }
                 break;
         }
 
@@ -176,9 +214,26 @@ public class Boss3D : MonoBehaviour
         }
     }
 
-    void TakeDamage() {
-       Debug.Log("Boss took damage"); 
+    public void OnNormTriggerEnter(OnTriggerDelegation delegation) { 
+        if ((delegation.Other.gameObject.layer == 8 || delegation.Other.gameObject.layer == 11)) {
+            bossCurrHealth -= playerBulletDamage;
+            Debug.Log("Damage taken! HP: " + bossCurrHealth + "/" + bossMaxHealth);
+        }
     }
+
+    public void OnWeakTriggerEnter(OnTriggerDelegation delegation) {
+        bossCurrHealth -= playerBulletDamage *2;
+        Debug.Log("Weak Point Hit! HP: " + bossCurrHealth+ "/" + bossMaxHealth);
+
+        if(state == State.LASER_CHARGE) {
+            state = State.IDLE;
+            laserCharge.SetActive(false);
+            laser.SetActive(false);
+            attacking = false;
+            Debug.Log("LASER CHARGE CANCELLED!");
+            }
+    }
+
 
     //attack selection ai
     void SelectAttack() {
@@ -216,7 +271,6 @@ public class Boss3D : MonoBehaviour
         if(fired < gunShots) {
             Rigidbody bulletInstance = Instantiate(bulletRB, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
             bulletInstance.velocity = projectileOrigin.transform.forward * bulletSpeed;
-            Debug.Log("pew");
             attacking = true;
             fired += 1;
         }
@@ -253,7 +307,9 @@ public class Boss3D : MonoBehaviour
 
     void Laser(){
         Debug.Log("Laser!");
-        attacking = false;
+        attacking = true;
+        laserTime = Time.time;
+        state = State.LASER_CHARGE;
     }
 
 }
