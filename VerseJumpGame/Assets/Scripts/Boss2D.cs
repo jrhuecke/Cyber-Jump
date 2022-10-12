@@ -32,6 +32,11 @@ public class Boss2D : MonoBehaviour
     int repeatThisMany = 0;
     bool swingingSword = false;
 
+    public BulletSpread2D bulletSpread;
+    public int bulletSpeadCountOdd = 9;
+    public float spreadSphereRadius = 2.0f;
+    public float spreadSize = 120.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -113,7 +118,7 @@ public class Boss2D : MonoBehaviour
         if(lastFrameResult != BehaviorResult.Running)
         {
             Debug.Log("Started sword slashes");
-            weaponRoot.transform.right = gameObject.transform.position - player.transform.position;
+            weaponRoot.transform.right = player.transform.position - gameObject.transform.position;
 
             repeatActionCounter = 0;
             repeatThisMany = 3; //Choose random # of times to slash
@@ -129,6 +134,15 @@ public class Boss2D : MonoBehaviour
             if (repeatActionCounter % 2 == 0) //Counter is even (will start here b/c counter starts at 0)
             {
                 animPlayer.Play("BossSwingSwordLeftRight", -1, 0);
+                BulletSpread2D bulletSpreadOdd = Instantiate(bulletSpread, weaponRoot.transform);
+                bulletSpreadOdd.bulletSpeed = 9;
+                bulletSpreadOdd.numOfBullets = bulletSpeadCountOdd;
+                bulletSpreadOdd.sphereRadius = 2.0f;
+                bulletSpreadOdd.spreadSize = 120.0f;
+
+
+                //Why does it think the weapon root is not centered on the boss? (But still has the sword slash behave as intneded?)
+                //Why does the bullet spread spawn way behind the weaponRoot?
             }
             else
             {
