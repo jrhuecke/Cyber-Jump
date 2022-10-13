@@ -21,6 +21,8 @@ public class Player2D : MonoBehaviour
     public float speedMax = 8.0f;
     Vector2 moveInput = Vector2.zero;
     float fireInput = 0;
+    private int playerHealth = 4;
+    public List<GameObject> hearts;
 
     Vector2 mousePos;
     public GameObject crosshair;
@@ -160,6 +162,12 @@ public class Player2D : MonoBehaviour
         if(damage > -1 && Time.time >= endiFrames)
         {
             Debug.Log("Player took " + damage + " damage!");
+            //Does damage and updates UI
+            if (playerHealth > 0)
+            {
+                playerHealth -= damage;
+                hearts[playerHealth].SetActive(false);
+            }
             endiFrames = Time.time + iFrames;
         }
         else if(damage < 0)
