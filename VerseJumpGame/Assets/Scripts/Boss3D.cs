@@ -19,10 +19,17 @@ public class Boss3D : MonoBehaviour
         LASER
     };
 
+    //Intro variables
+    public float introLength;
+    private float introTimer;
+    public float introBufferLength;
+    private float introBufferTimer;
+
     private Queue<Attack> bossQ;
-    [SerializeField] int bossMaxHealth = 1000;
-    private int bossCurrHealth;
-    [SerializeField] int playerBulletDamage = 2;
+    [SerializeField] float bossMaxHealth = 1000;
+    private float bossCurrHealth;
+    [SerializeField] float playerBulletDamage = 2;
+    [SerializeField] float playerLaserDamage = 1;
     [SerializeField] float attackRate = 3.0f; //at minimum 3 sec delay between attacks
     private float nextAttack; //used to calculate when boss can begin next attack
     private bool attacking = false; //is the boss currently in an attack animation
@@ -65,7 +72,8 @@ public class Boss3D : MonoBehaviour
         SPIN,
         LASER_CHARGE,
         LASER_FIRE,
-        IDLE
+        IDLE,
+        SCENE_START
     };
 
     State state;
@@ -73,6 +81,9 @@ public class Boss3D : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        introTimer = 0;
+        introBufferTimer = 0;
+
         bossQ = new Queue<Attack>();
         fired = 0;
 
@@ -83,7 +94,7 @@ public class Boss3D : MonoBehaviour
         spinSpeed = (360/spinDuration);
         Debug.Log(spinSpeed);
 
-        state = State.IDLE;
+        state = State.SCENE_START;
 
         laser.SetActive(false);
         laserCharge.SetActive(false);
@@ -96,6 +107,26 @@ public class Boss3D : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        //boss can't do anything until intro is over
+        if (state == State.SCENE_START)
+        {
+            if (introBufferTimer <= introBufferLength)
+            {
+                introBufferTimer += Time.deltaTime;
+                return;
+            }
+            else
+            {
+                if (introTimer >= introLength)
+                {
+                    state = State.IDLE;
+                }
+                introTimer += Time.deltaTime;
+                return;
+            }  
+        }
+
         //boss looking at player when enabled
         if (passiveTracking) {gameObject.transform.LookAt(player.transform.position);}
 
@@ -214,8 +245,8 @@ public class Boss3D : MonoBehaviour
         }
     }
 
-    public void OnNormTriggerEnter(OnTriggerDelegation delegation) { 
-        if ((delegation.Other.gameObject.layer == 8 || delegation.Other.gameObject.layer == 11)) {
+    public void OnNormTriggerEnter(OnTriggerDelegation delegation) {
+        if (delegation.Other.gameObject.layer == 8) {
             bossCurrHealth -= playerBulletDamage;
             Debug.Log("Damage taken! HP: " + bossCurrHealth + "/" + bossMaxHealth);
         }
@@ -233,6 +264,35 @@ public class Boss3D : MonoBehaviour
             Debug.Log("LASER CHARGE CANCELLED!");
             }
     }
+
+    public void OnNormTriggerStay(OnTriggerDelegation delegation)
+    {
+        if (delegation.Other.gameObject.layer == 11)
+        {
+            bossCurrHealth -= playerLaserDamage * Time.deltaTime;
+            Debug.Log("Damage taken! HP: " + bossCurrHealth + "/" + bossMaxHealth);
+        }
+    }
+
+    public void OnWeakTriggerStay(OnTriggerDelegation delegation)
+    {
+        if (delegation.Other.gameObject.layer == 11)
+        {
+            bossCurrHealth -= playerLaserDamage * Time.deltaTime * 2;
+            Debug.Log("Weak Spot Hit! HP: " + bossCurrHealth + "/" + bossMaxHealth);
+            if (state == State.LASER_CHARGE)
+            {
+                state = State.IDLE;
+                laserCharge.SetActive(false);
+                laser.SetActive(false);
+                attacking = false;
+                Debug.Log("LASER CHARGE CANCELLED!");
+            }
+        }
+    }
+
+
+
 
 
     //attack selection ai
@@ -252,7 +312,7 @@ public class Boss3D : MonoBehaviour
             bossQ.Enqueue(Attack.CHARGE);
             bossQ.Enqueue(Attack.SPIN);
         }
-        else if(pick >= 75 && pick < 90) {
+        else if(pick >= 75 && pick < 92) {
             Debug.Log(Vector3.Distance(gameObject.transform.position, player.transform.position));
             if(Vector3.Distance(gameObject.transform.position, player.transform.position) < 6.8f) {
                 bossQ.Enqueue(Attack.SPIN);
@@ -263,7 +323,8 @@ public class Boss3D : MonoBehaviour
         
         }
         else {
-            bossQ.Enqueue(Attack.LASER);
+            bossQ.Enqueue(Attack.CHARGE);
+            bossQ.Enqueue(Attack.SPIN);
         }
     }
 

@@ -22,8 +22,12 @@ public class OnTrigger3DDelegator : MonoBehaviour
     [Tooltip("Which function should be called when trigger was exited.")]
     public UnityEvent<OnTriggerDelegation> Exit;
 
+    [Tooltip("Which function should be called when trigger stays.")]
+    public UnityEvent<OnTriggerDelegation> Stay;
+
     void OnTriggerEnter(Collider other) => Enter.Invoke(new OnTriggerDelegation(caller, other));
     void OnTriggerExit(Collider other) => Exit.Invoke(new OnTriggerDelegation(caller, other));
+    void OnTriggerStay(Collider other) => Stay.Invoke(new OnTriggerDelegation(caller, other));
 }
 
 /// <summary>

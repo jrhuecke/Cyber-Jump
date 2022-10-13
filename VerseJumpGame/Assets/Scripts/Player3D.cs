@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player3D : MonoBehaviour
 {
@@ -9,10 +10,18 @@ public class Player3D : MonoBehaviour
         WAITING,
         PRIMARY_FIRE,
         SECONDARY_WIND_UP,
-        SECONDARY_FIRE
+        SECONDARY_FIRE,
+        SCENE_START,
+        DEAD
     }
 
     State state;
+
+    //Start of scene variables
+    public float introLength;
+    private float introTimer;
+    public float introBufferLength;
+    private float introBufferTimer;
 
     //Movement variables
     public CharacterController controller;
@@ -26,6 +35,7 @@ public class Player3D : MonoBehaviour
     public float invulnerability = 1f;
     private float invulnerabilityTimer;
     public List<GameObject> hearts;
+    public GameObject gameOvertext;
 
     //Jumping/falling variables
     public Transform groundCheck;
@@ -57,33 +67,77 @@ public class Player3D : MonoBehaviour
 
     private void Start()
     {
+        introBufferTimer = 0f;
         bulletCooldownTimer = 0f;
         secondaryFireWindUpTimer = secondaryFireWindUp;
-        state = State.WAITING;
+        state = State.SCENE_START;
+        introTimer = 0f;
     }
 
     void Update()
     {
+        //player can't do anything until intro is over
+        if (state == State.SCENE_START)
+        {
+            if (introBufferTimer <= introBufferLength)
+            {
+                introBufferTimer += Time.deltaTime;
+                return;
+            }
+            else
+            {
+                if (introTimer >= introLength)
+                {
+                    state = State.WAITING;
+                }
+                introTimer += Time.deltaTime;
+                return;
+            }
+        }
+
+        if (state == State.DEAD)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                SceneManager.LoadScene("3DScene");
+            }
+            return;
+        }
+
+        if (playerHealth3D <= 0)
+        {
+            gameOvertext.SetActive(true);
+            state = State.DEAD;
+            return;
+        }
+
         //checks if player is on ground by casting a sphere at players feet and seeing if that collides with the ground
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         applyGravity();
 
+        //gathers input on if the player wants to jump
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             Jump();
         }
 
-        //moves player on x and z axis
+        //gathers input for player on x and z axis
         sidewaysMovement = Input.GetAxis("Horizontal") * speed;
         forwardMovement = Input.GetAxis("Vertical") * speed;
         move = (transform.right * sidewaysMovement) + (transform.forward * forwardMovement);
         velocity = new Vector3(move.x, velocity.y, move.z);
 
-        //Moves player
+        //Moves player (vertically and horizontally)
         if (velocity != Vector3.zero)
         {
             controller.Move(velocity * Time.deltaTime);
+        }
+
+        //teleports player back up to arena if they somehow fall through it
+        if (transform.position.y < -5)
+        {
+            transform.position = new Vector3(0, 2, 0);
         }
 
         //cooldown between bullets
@@ -209,16 +263,16 @@ public class Player3D : MonoBehaviour
         if (target.point == Vector3.zero)
         {
             bulletOrigin.localRotation = Quaternion.Euler(0f, 0f, 0f);
-            laserObject.transform.localPosition = new Vector3(0f, 0f, 10f);
-            laserObject.transform.localScale = new Vector3(0.3f, 10f, 0.3f);
+            laserObject.transform.localPosition = new Vector3(0f, -.06f, 10f);
+            laserObject.transform.localScale = new Vector3(0.2f, 10f, 0.2f);
         }
         else
         {
             /* Updates the local position and scale of laser so that it doesn't go through objects (it intentionally pokes a tiny bit into objects
                so that damage collision can be detected) */
             bulletOrigin.LookAt(target.point);
-            laserObject.transform.localPosition = new Vector3(0f, 0f, Mathf.Abs((Vector3.Distance(bulletOrigin.position, target.point)) + 0.5f) / 2);
-            laserObject.transform.localScale = new Vector3(0.3f, Mathf.Abs((Vector3.Distance(bulletOrigin.position, target.point)) + 0.5f) / 2, 0.3f);
+            laserObject.transform.localPosition = new Vector3(0f, -.06f, Mathf.Abs((Vector3.Distance(bulletOrigin.position, target.point)) + 0.5f) / 2);
+            laserObject.transform.localScale = new Vector3(0.2f, Mathf.Abs((Vector3.Distance(bulletOrigin.position, target.point)) + 0.5f) / 2, 0.2f); 
         }
     }
 
