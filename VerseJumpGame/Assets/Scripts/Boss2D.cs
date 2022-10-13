@@ -176,6 +176,8 @@ public class Boss2D : MonoBehaviour
             {
                 animPlayer.Play("BossSwingSwordLeftRight", -1, 0);
                 BulletSpread2D bulletSpreadOdd = Instantiate(bulletSpread, weaponRoot.transform);
+                bulletSpreadOdd.transform.position += weaponRoot.transform.right.normalized * 2f;
+
                 bulletSpreadOdd.bulletSpeed = bulletSpreadSpeed;
                 bulletSpreadOdd.numOfBullets = bulletSpeadCountOdd;
                 bulletSpreadOdd.sphereRadius = spreadSphereRadius;
@@ -185,6 +187,8 @@ public class Boss2D : MonoBehaviour
             {
                 animPlayer.Play("BossSwingSwordRightLeft", -1, 0);
                 BulletSpread2D bulletSpreadEven = Instantiate(bulletSpread, weaponRoot.transform);
+                bulletSpreadEven.transform.position += weaponRoot.transform.right.normalized * 2f;
+
                 bulletSpreadEven.bulletSpeed = bulletSpreadSpeed;
                 bulletSpreadEven.numOfBullets = bulletSpeadCountOdd - 1;
                 bulletSpreadEven.sphereRadius = spreadSphereRadius;

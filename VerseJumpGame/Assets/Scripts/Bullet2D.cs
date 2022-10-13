@@ -17,6 +17,9 @@ public class Bullet2D : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Destroy(gameObject, 0);
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Default"))
+        {
+            Destroy(gameObject, 0);
+        }   
     }
 }
