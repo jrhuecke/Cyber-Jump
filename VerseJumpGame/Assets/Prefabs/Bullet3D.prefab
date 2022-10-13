@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifetime: 2
+  player3D: {fileID: 0}
 --- !u!54 &4368505660530500983
 Rigidbody:
   m_ObjectHideFlags: 0

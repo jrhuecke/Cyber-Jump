@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -2431655810699450911}
   - component: {fileID: 9053107560664082066}
   - component: {fileID: -1325839935465837397}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Boss Bullet 3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 844202795855476643}
   - component: {fileID: 4471227263581726902}
   - component: {fileID: 143644326777768498}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
