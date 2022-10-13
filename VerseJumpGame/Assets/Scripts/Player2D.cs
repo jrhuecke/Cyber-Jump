@@ -14,12 +14,13 @@ useFullKinematicContacts is set to true. Maybe we can make this change later?
 
 public class Player2D : MonoBehaviour
 {
-    // Start is called before the first frame update
+    Rigidbody2D rigidbody;
+    Animator charAnimator;
+    public SpriteRenderer weaponSprite;
+
     public float speedMax = 8.0f;
     Vector2 moveInput = Vector2.zero;
     float fireInput = 0;
-    Rigidbody2D rigidbody;
-    SpriteRenderer sprite;
 
     Vector2 mousePos;
     public GameObject crosshair;
@@ -42,7 +43,7 @@ public class Player2D : MonoBehaviour
     {
         Cursor.visible = false;
         rigidbody = this.GetComponent<Rigidbody2D>();
-        sprite = this.GetComponent<SpriteRenderer>();
+        charAnimator = this.GetComponent<Animator>();
     }
 
     /*The player input component sends these function calls/"messages" to this script
@@ -67,12 +68,14 @@ public class Player2D : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 converion = new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane);
-        crosshair.transform.position = Camera.main.ScreenToWorldPoint(converion);
+        
     }
 
     private void FixedUpdate()
     {
+        Vector3 converion = new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane);
+        crosshair.transform.position = Camera.main.ScreenToWorldPoint(converion);
+
         //Machine gun shooting
         if (fireInput > 0.0f && Time.time >= shootDelay)
         {
@@ -86,45 +89,69 @@ public class Player2D : MonoBehaviour
             bulletInstance.velocity = bulletInstance.transform.right * bulletSpeed;
             bulletInstance.gameObject.GetComponent<DamageBoss2D>().DamageToBoss = bulletDamage;
             shootDelay = Time.time + rateOfFireMG;
+
+            weaponSprite.gameObject.GetComponent<Animator>().Play("WeaponShoot", -1, 0);
+            //Could slightly delay the creation of the projectile if we have time (By making the instantiate its own function and calling it on the animation)
         }
 
         Vector3 conversion = new Vector3(moveInput.x, moveInput.y);
         conversion = conversion.normalized;
         rigidbody.velocity = conversion * speedMax;
 
-        //Animation stuff
-        if (crosshair.transform.position.x > gameObject.transform.position.x)
-        {
-            sprite.flipX = false;
-            weaponRoot.transform.localScale = new Vector3(1, 1, 1);
-        }
-        else
-        {
-            sprite.flipX = true;
-            weaponRoot.transform.localScale = new Vector3(1, -1, 1);
-        }
-
         //Gun + projectile rotation
+        /*This took a lot of corrections and adjustments to get right...*/
         Vector3 crosshair2Dpos = crosshair.transform.position;
         crosshair2Dpos.z = 0;
-        weaponRoot.transform.right = crosshair2Dpos - gameObject.transform.position;
+        weaponRoot.transform.LookAt(crosshair2Dpos);
 
-        /*
-        if(moveInput != Vector2.zero && !attacking) //If player stops moving, the direction they were facing will persist instead of being reset
-        {
-            charAnimator.SetFloat("VelocityX", rigidbody.velocity.x);
-            charAnimator.SetFloat("VelocityY", rigidbody.velocity.y);
-        }
+        Vector2 rootToCrosshair = crosshair2Dpos - weaponRoot.transform.position;
+        float aimAngle = Vector2.SignedAngle(rootToCrosshair, Vector2.right);
 
-        //Attack animation
-        attackCooldown -= Time.fixedDeltaTime;
-        if(attackCooldown < 0f)
+        /* (Trying to set weaponRoot.right
+         * When aiming to the exact left, the weaponRoot changes from using its Z rotation to using its Y rotation, which is why it flips along the Y axis
+         * compared to its default rotation.
+         */
+
+        //Hiding gun behind player (Will later add to a player layer and order that player layer behind stuff properly
+        if (aimAngle < -25.0f && aimAngle > -155.0f)
+            weaponSprite.sortingOrder = -1;
+        else
+            weaponSprite.sortingOrder = 1;
+
+        //Make player face the direction they're looking
+        Vector2 playerLookDir = rootToCrosshair.normalized;
+        charAnimator.SetFloat("LookX", playerLookDir.x);
+        charAnimator.SetFloat("LookY", playerLookDir.y);
+        charAnimator.SetFloat("Speed", rigidbody.velocity.magnitude);
+
+        //Decide if doing a vertical or horizontal animation
+        //Horizontal if magnitude of x > magnitude of y, and vice-versa
+        if(Mathf.Abs(playerLookDir.x) >= Mathf.Abs(playerLookDir.y)) //Horizontal animation
         {
-            attacking = false;
-            Debug.Log("Not attacking");
+            if(rigidbody.velocity.magnitude > 0 && playerLookDir.x > 0 && rigidbody.velocity.x < 0) //If velocity != look direction
+            {
+                //Play animation backwards
+                charAnimator.SetBool("PlayAnimBackwards", true);
+            }
+            else
+            {
+                //Play animation forwards, as usual
+                charAnimator.SetBool("PlayAnimBackwards", false);
+            }
         }
-        charAnimator.SetBool("Attacking", attacking);
-        */
+        else //Vertical animation
+        {
+            if (rigidbody.velocity.magnitude > 0 && playerLookDir.y > 0 && rigidbody.velocity.y < 0) //If velocity != look direction
+            {
+                //Play animation backwards
+                charAnimator.SetBool("PlayAnimBackwards", true);
+            }
+            else
+            {
+                //Play animation forwards, as usual
+                charAnimator.SetBool("PlayAnimBackwards", false);
+            }
+        }
     }
 
     //To be called by trigger colliders that are meant to deal damage to the player (bullets, boss melee, etc)

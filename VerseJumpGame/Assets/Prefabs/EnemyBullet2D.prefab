@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2626220599497104527}
   - component: {fileID: 2626220599497104526}
-  - component: {fileID: 2626220599497104525}
   - component: {fileID: 2626220599497104524}
   - component: {fileID: 2626220599497104523}
   - component: {fileID: 2626220599497104522}
+  - component: {fileID: 4286747695049215078}
   m_Layer: 9
   m_Name: EnemyBullet2D
   m_TagString: Untagged
@@ -77,8 +77,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1295635954, guid: 1c3181289ed9ad541b5bfdc30545d22f, type: 3}
-  m_Color: {r: 0.17022514, g: 1, b: 0, a: 1}
+  m_Sprite: {fileID: -351962237, guid: ba1e324a05b4d3148b706be60ae63050, type: 3}
+  m_Color: {r: 1, g: 0.6905709, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -88,22 +88,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!70 &2626220599497104525
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2626220599497104521}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.125, y: -0.03}
-  m_Size: {x: 0.5, y: 0.3125}
-  m_Direction: 1
 --- !u!114 &2626220599497104524
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,3 +135,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifetime: 5
+--- !u!58 &4286747695049215078
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2626220599497104521}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.1875, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.25
