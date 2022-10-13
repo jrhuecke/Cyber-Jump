@@ -22,6 +22,7 @@ public class Player3D : MonoBehaviour
     private float introTimer;
     public float introBufferLength;
     private float introBufferTimer;
+    public GameObject controlsText;
 
     //Movement variables
     public CharacterController controller;
@@ -89,6 +90,7 @@ public class Player3D : MonoBehaviour
                 if (introTimer >= introLength)
                 {
                     state = State.WAITING;
+                    controlsText.SetActive(false);
                 }
                 introTimer += Time.deltaTime;
                 return;
