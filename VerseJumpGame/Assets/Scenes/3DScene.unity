@@ -421,6 +421,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0eac863f258c348b2c000e99ece252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  introLength: 3
+  introBufferLength: 1
   controller: {fileID: 295178363}
   speed: 10
   velocity: {x: 0, y: 0, z: 0}
@@ -480,7 +482,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295178361}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.793, z: 0}
+  m_LocalPosition: {x: 0, y: 1.793, z: -7.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -818,7 +820,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 586930375}
   m_LocalRotation: {x: -0.04893535, y: 0.6902969, z: -0.046865705, w: -0.72034657}
-  m_LocalPosition: {x: 0.8, y: 2.473, z: -2.5}
+  m_LocalPosition: {x: 0.8, y: 2.473, z: -10.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -842,6 +844,9 @@ MonoBehaviour:
   followTarget: {fileID: 1507364929}
   horizontalSensitivity: 600
   verticalSensitivity: 500
+  introLength: 3
+  introTimer: 0
+  introLookRate: 30
 --- !u!1 &637056979
 GameObject:
   m_ObjectHideFlags: 0
@@ -1030,7 +1035,7 @@ GameObject:
   - component: {fileID: 1076830442}
   - component: {fileID: 1076830441}
   - component: {fileID: 1076830446}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Boss 3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1049,8 +1054,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f956672ba3eb80a4d908040632959937, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  introLength: 3
+  introBufferLength: 1
   bossMaxHealth: 1000
   playerBulletDamage: 2
+  playerLaserDamage: 30
   attackRate: 3
   gunShots: 3
   bulletSpeed: 30
@@ -1138,7 +1146,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1076830440}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 1, y: 3, z: 8}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
@@ -1148,7 +1156,7 @@ Transform:
   - {fileID: 637056980}
   m_Father: {fileID: 0}
   m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &1076830446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1179,6 +1187,21 @@ MonoBehaviour:
   Exit:
     m_PersistentCalls:
       m_Calls: []
+  Stay:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1076830441}
+        m_TargetAssemblyTypeName: Boss3D, Assembly-CSharp
+        m_MethodName: OnNormTriggerStay
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1135426354
 GameObject:
   m_ObjectHideFlags: 0
@@ -1279,7 +1302,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1186365098}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.00000035762787, y: 0, z: 0.23000008}
+  m_LocalPosition: {x: -0.00000035762787, y: 0, z: 0.46}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1415,6 +1438,21 @@ MonoBehaviour:
   Exit:
     m_PersistentCalls:
       m_Calls: []
+  Stay:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1076830441}
+        m_TargetAssemblyTypeName: Boss3D, Assembly-CSharp
+        m_MethodName: OnWeakTriggerStay
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1212884889
 GameObject:
   m_ObjectHideFlags: 0
@@ -1708,8 +1746,9 @@ GameObject:
   - component: {fileID: 1448842715}
   - component: {fileID: 1448842714}
   - component: {fileID: 1448842713}
+  - component: {fileID: 1448842716}
   m_Layer: 11
-  m_Name: Cylinder
+  m_Name: PlayerLaser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1738,7 +1777,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1448842711}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5000001
   m_Height: 2
@@ -1794,6 +1833,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1448842711}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &1448842716
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448842711}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1494375567
 GameObject:
   m_ObjectHideFlags: 0
@@ -1980,7 +2035,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1525699888}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.8, y: 2.473, z: -2.5}
+  m_LocalPosition: {x: 0.8, y: 2.473, z: -10.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
