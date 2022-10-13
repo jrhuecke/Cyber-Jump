@@ -51,6 +51,11 @@ public class Boss2D : MonoBehaviour
     public float chargeOvershoot = 4.0f;
     public float chargeSpeed = 16.0f;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip chargeSound;
+    public AudioClip slashSound;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -180,6 +185,7 @@ public class Boss2D : MonoBehaviour
                 bulletSpreadOdd.numOfBullets = bulletSpeadCountOdd;
                 bulletSpreadOdd.sphereRadius = spreadSphereRadius;
                 bulletSpreadOdd.spreadSize = spreadSize;
+                audioSource.PlayOneShot(slashSound);
             }
             else
             {
@@ -189,6 +195,7 @@ public class Boss2D : MonoBehaviour
                 bulletSpreadEven.numOfBullets = bulletSpeadCountOdd - 1;
                 bulletSpreadEven.sphereRadius = spreadSphereRadius;
                 bulletSpreadEven.spreadSize = spreadSize;
+                audioSource.PlayOneShot(slashSound);
             }
             //To create the bullets: spawn a group of bullets around the boss that are evenly spaced between each other
             swingingSword = true;
@@ -215,6 +222,11 @@ public class Boss2D : MonoBehaviour
          * Turns around in X time and then follows up with a sword slashes attack
          *     (If he collided with a wall while charging, the turn take a bit longer)
          */
+        
+        if(!audioSource.isPlaying)
+        {
+            audioSource.PlayOneShot(chargeSound);
+        }
 
         if(lastFrameResult != BehaviorResult.Running) //First time call
         {
@@ -229,6 +241,7 @@ public class Boss2D : MonoBehaviour
             waitTillTime = Time.time + chargeStartupTime; //Do the startup animation for x seconds
 
             chargePhase = 0;
+
         }
         if(Time.time > waitTillTime)
         {
@@ -240,11 +253,13 @@ public class Boss2D : MonoBehaviour
             else if(chargePhase == 1)
             {
                 //Charging
+                
             }
             else if(chargePhase == 2)
             {
                 //Finished turn-around.
                 Debug.Log("Finished charge attack");
+                audioSource.Stop();
                 return BehaviorResult.Success;
             }
         }
