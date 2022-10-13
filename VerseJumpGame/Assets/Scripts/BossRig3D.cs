@@ -206,7 +206,8 @@ public class BossRig3D : MonoBehaviour
 
 
         //tracking projectile origin to aim at player (happens always)
-        projectileOrigin.transform.LookAt(player.transform.position);
+        gunOrigin.transform.LookAt(player.transform.position);
+        laserOrigin.transform.LookAt(player.transform.position);
 
         //execute the next attack in the queue
         if(!attacking) {
@@ -330,10 +331,11 @@ public class BossRig3D : MonoBehaviour
 
     void Gun(){
         if(fired < gunShots) {
-            Rigidbody bulletInstance = Instantiate(bulletRB, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
-            bulletInstance.velocity = projectileOrigin.transform.forward * bulletSpeed;
+            Rigidbody bulletInstance = Instantiate(bulletRB, gunOrigin.transform.position, gunOrigin.transform.rotation);
+            bulletInstance.velocity = gunOrigin.transform.forward * bulletSpeed;
             attacking = true;
             fired += 1;
+            Debug.Log("pew");
         }
         else {
             CancelInvoke("Gun");
