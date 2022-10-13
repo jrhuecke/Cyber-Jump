@@ -15,8 +15,11 @@ public class BossBullet3D : MonoBehaviour
         Destroy(gameObject, lifetime);
     }
 
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerEnter(Collider other)
     {
+        if(other.gameObject.layer != 9 && other.gameObject.layer != 7 && other.gameObject.layer != 10) {
             Destroy(gameObject, 0);
+            Debug.Log("destroyed bullet layer " + other.gameObject.layer);
+        }
     }
 }
