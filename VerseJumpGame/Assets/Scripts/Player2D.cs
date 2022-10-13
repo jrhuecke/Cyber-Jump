@@ -20,6 +20,7 @@ public class Player2D : MonoBehaviour
     float fireInput = 0;
     Rigidbody2D rigidbody;
     SpriteRenderer sprite;
+    Animator charAnimator;
 
     Vector2 mousePos;
     public GameObject crosshair;
@@ -43,6 +44,7 @@ public class Player2D : MonoBehaviour
         Cursor.visible = false;
         rigidbody = this.GetComponent<Rigidbody2D>();
         sprite = this.GetComponent<SpriteRenderer>();
+        charAnimator = this.GetComponent<Animator>();
     }
 
     /*The player input component sends these function calls/"messages" to this script
@@ -95,12 +97,10 @@ public class Player2D : MonoBehaviour
         //Animation stuff
         if (crosshair.transform.position.x > gameObject.transform.position.x)
         {
-            sprite.flipX = false;
             weaponRoot.transform.localScale = new Vector3(1, 1, 1);
         }
         else
         {
-            sprite.flipX = true;
             weaponRoot.transform.localScale = new Vector3(1, -1, 1);
         }
 
@@ -109,21 +109,17 @@ public class Player2D : MonoBehaviour
         crosshair2Dpos.z = 0;
         weaponRoot.transform.right = crosshair2Dpos - gameObject.transform.position;
 
+        //Make player face the direction they're looking
+        Vector2 playerLookDir = weaponRoot.transform.right.normalized;
+        charAnimator.SetFloat("LookX", playerLookDir.x);
+        charAnimator.SetFloat("LookY", playerLookDir.y);
+
         /*
         if(moveInput != Vector2.zero && !attacking) //If player stops moving, the direction they were facing will persist instead of being reset
         {
             charAnimator.SetFloat("VelocityX", rigidbody.velocity.x);
             charAnimator.SetFloat("VelocityY", rigidbody.velocity.y);
         }
-
-        //Attack animation
-        attackCooldown -= Time.fixedDeltaTime;
-        if(attackCooldown < 0f)
-        {
-            attacking = false;
-            Debug.Log("Not attacking");
-        }
-        charAnimator.SetBool("Attacking", attacking);
         */
     }
 
