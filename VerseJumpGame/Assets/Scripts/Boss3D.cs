@@ -312,7 +312,7 @@ public class Boss3D : MonoBehaviour
             bossQ.Enqueue(Attack.CHARGE);
             bossQ.Enqueue(Attack.SPIN);
         }
-        else if(pick >= 75 && pick < 90) {
+        else if(pick >= 75 && pick < 92) {
             Debug.Log(Vector3.Distance(gameObject.transform.position, player.transform.position));
             if(Vector3.Distance(gameObject.transform.position, player.transform.position) < 6.8f) {
                 bossQ.Enqueue(Attack.SPIN);
@@ -323,7 +323,8 @@ public class Boss3D : MonoBehaviour
         
         }
         else {
-            bossQ.Enqueue(Attack.LASER);
+            bossQ.Enqueue(Attack.CHARGE);
+            bossQ.Enqueue(Attack.SPIN);
         }
     }
 
