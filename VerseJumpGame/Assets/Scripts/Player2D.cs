@@ -21,6 +21,8 @@ public class Player2D : MonoBehaviour
     public float speedMax = 8.0f;
     Vector2 moveInput = Vector2.zero;
     float fireInput = 0;
+    private int playerHealth = 4;
+    public List<GameObject> hearts;
 
     Vector2 mousePos;
     public GameObject crosshair;
@@ -38,6 +40,11 @@ public class Player2D : MonoBehaviour
     public float rateOfFireMG = 0.166f;
     float shootDelay = 0;
     public float randomSpreadMG = 4.0f; //Degrees in which the bullet can randomly offshoot
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip gunSound;
+    public AudioClip hitSound;
 
     void Start()
     {
@@ -92,6 +99,8 @@ public class Player2D : MonoBehaviour
 
             weaponSprite.gameObject.GetComponent<Animator>().Play("WeaponShoot", -1, 0);
             //Could slightly delay the creation of the projectile if we have time (By making the instantiate its own function and calling it on the animation)
+
+            audioSource.PlayOneShot(gunSound);
         }
 
         Vector3 conversion = new Vector3(moveInput.x, moveInput.y);
@@ -160,6 +169,14 @@ public class Player2D : MonoBehaviour
         if(damage > -1 && Time.time >= endiFrames)
         {
             Debug.Log("Player took " + damage + " damage!");
+            //Does damage and updates UI
+            if (playerHealth > 0)
+            {
+                playerHealth -= damage;
+                hearts[playerHealth].SetActive(false);
+
+                audioSource.PlayOneShot(hitSound);
+            }
             endiFrames = Time.time + iFrames;
         }
         else if(damage < 0)
