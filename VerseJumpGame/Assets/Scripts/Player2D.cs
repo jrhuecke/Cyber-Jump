@@ -113,14 +113,7 @@ public class Player2D : MonoBehaviour
         Vector2 playerLookDir = weaponRoot.transform.right.normalized;
         charAnimator.SetFloat("LookX", playerLookDir.x);
         charAnimator.SetFloat("LookY", playerLookDir.y);
-
-        /*
-        if(moveInput != Vector2.zero && !attacking) //If player stops moving, the direction they were facing will persist instead of being reset
-        {
-            charAnimator.SetFloat("VelocityX", rigidbody.velocity.x);
-            charAnimator.SetFloat("VelocityY", rigidbody.velocity.y);
-        }
-        */
+        charAnimator.SetFloat("Speed", rigidbody.velocity.magnitude);
     }
 
     //To be called by trigger colliders that are meant to deal damage to the player (bullets, boss melee, etc)
