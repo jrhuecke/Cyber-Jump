@@ -1,5 +1,5 @@
 {
-    "name": "PixelArtExampleScene",
+    "name": "PlayerInput2D",
     "maps": [
         {
             "name": "Player",
@@ -16,12 +16,12 @@
                 },
                 {
                     "name": "Fire",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "be28013e-f648-4e36-a131-d144140b9abc",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Integer",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Aim",
