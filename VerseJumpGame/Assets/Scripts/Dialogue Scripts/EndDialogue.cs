@@ -5,7 +5,7 @@ using UnityEngine;
 public class EndDialogue : MonoBehaviour
 {
     public Character Anita;
-    public Character guy;
+    public Character RuPaw;
     DialogueSystem dialogue;
 
 
@@ -14,7 +14,7 @@ public class EndDialogue : MonoBehaviour
     {
         dialogue = DialogueSystem.instance;
         Anita = CharacterManager.instance.GetCharacter ("Anita", enableCreatedCharacterOnStart: false);
-        guy = CharacterManager.instance.GetCharacter ("guy", enableCreatedCharacterOnStart: false);
+        RuPaw = CharacterManager.instance.GetCharacter ("Rupaw", enableCreatedCharacterOnStart: false);
         DialogueSystem.instance.openPan();
     }
 
@@ -46,7 +46,7 @@ public class EndDialogue : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space))
         {
             if (i < speech.Length)
-                guy.Say (speech[i]);
+                RuPaw.Say (speech[i]);
             else if (i >= speech.Length && (i-speech.Length) < speech2.Length)
                 Anita.Say(speech2[i-speech.Length]);
 

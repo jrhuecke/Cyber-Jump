@@ -5,7 +5,7 @@ using UnityEngine;
 public class IntroDialogue : MonoBehaviour
 {
     public Character Anita;
-    public Character guy;
+    public Character RuPaw;
     DialogueSystem dialogue;
 
 
@@ -14,7 +14,7 @@ public class IntroDialogue : MonoBehaviour
     {
         dialogue = DialogueSystem.instance;
         Anita = CharacterManager.instance.GetCharacter ("Anita", enableCreatedCharacterOnStart: false);
-        guy = CharacterManager.instance.GetCharacter ("guy", enableCreatedCharacterOnStart: false);
+        RuPaw = CharacterManager.instance.GetCharacter ("Rupaw", enableCreatedCharacterOnStart: false);
         DialogueSystem.instance.openPan();
     }
 
@@ -51,7 +51,7 @@ public class IntroDialogue : MonoBehaviour
             if (i < speech.Length)
                 Anita.Say (speech[i]);
             else if (i >= speech.Length && (i-speech.Length) < speech2.Length)
-                guy.Say(speech2[i-speech.Length]);
+                RuPaw.Say(speech2[i-speech.Length]);
 
             else if((i-speech.Length) >= speech2.Length && (i-(speech.Length+speech2.Length)) < bothtext.Length)
                 Say(bothtext[i-(speech.Length+speech2.Length)]);
