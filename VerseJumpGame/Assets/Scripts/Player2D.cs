@@ -15,8 +15,8 @@ useFullKinematicContacts is set to true. Maybe we can make this change later?
 public class Player2D : MonoBehaviour
 {
     Rigidbody2D rigidbody;
-    SpriteRenderer sprite;
     Animator charAnimator;
+    public SpriteRenderer weaponSprite;
 
     public float speedMax = 8.0f;
     Vector2 moveInput = Vector2.zero;
@@ -43,7 +43,6 @@ public class Player2D : MonoBehaviour
     {
         Cursor.visible = false;
         rigidbody = this.GetComponent<Rigidbody2D>();
-        sprite = this.GetComponent<SpriteRenderer>();
         charAnimator = this.GetComponent<Animator>();
     }
 
@@ -123,6 +122,11 @@ public class Player2D : MonoBehaviour
          * compared to its default rotation.
          */
 
+        //Hiding gun behind player (Will later add to a player layer and order that player layer behind stuff properly
+        if (aimAngle < -25.0f && aimAngle > -155.0f)
+            weaponSprite.sortingOrder = -1;
+        else
+            weaponSprite.sortingOrder = 1;
 
         //Make player face the direction they're looking
         Vector2 playerLookDir = rootToCrosshair.normalized;
