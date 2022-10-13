@@ -89,21 +89,14 @@ public class Player2D : MonoBehaviour
             bulletInstance.velocity = bulletInstance.transform.right * bulletSpeed;
             bulletInstance.gameObject.GetComponent<DamageBoss2D>().DamageToBoss = bulletDamage;
             shootDelay = Time.time + rateOfFireMG;
+
+            weaponSprite.gameObject.GetComponent<Animator>().Play("WeaponShoot", -1, 0);
+            //Could slightly delay the creation of the projectile if we have time (By making the instantiate its own function and calling it on the animation)
         }
 
         Vector3 conversion = new Vector3(moveInput.x, moveInput.y);
         conversion = conversion.normalized;
         rigidbody.velocity = conversion * speedMax;
-
-        //Animation stuff
-        /*if (crosshair.transform.position.x > gameObject.transform.position.x)
-        {
-            weaponRoot.transform.localScale = new Vector3(1, 1, 1);
-        }
-        else
-        {
-            weaponRoot.transform.localScale = new Vector3(1, -1, 1);
-        }*/
 
         //Gun + projectile rotation
         /*This took a lot of corrections and adjustments to get right...*/
@@ -112,10 +105,7 @@ public class Player2D : MonoBehaviour
         weaponRoot.transform.LookAt(crosshair2Dpos);
 
         Vector2 rootToCrosshair = crosshair2Dpos - weaponRoot.transform.position;
-        Debug.Log("First vector: " + rootToCrosshair);
-        Debug.Log("Second vector: " + Vector2.right);
         float aimAngle = Vector2.SignedAngle(rootToCrosshair, Vector2.right);
-        Debug.Log(aimAngle);
 
         /* (Trying to set weaponRoot.right
          * When aiming to the exact left, the weaponRoot changes from using its Z rotation to using its Y rotation, which is why it flips along the Y axis
