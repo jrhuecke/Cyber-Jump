@@ -13,11 +13,12 @@ public class Bullet3D : MonoBehaviour
         Destroy(gameObject, lifetime);
     }
 
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == 7)
         {
-           player3D.secondaryFireCharge += 5;
+            player3D.secondaryFireCharge += 1;
         }
         Destroy(gameObject);
     }
