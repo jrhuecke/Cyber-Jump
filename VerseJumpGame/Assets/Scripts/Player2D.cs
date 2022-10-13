@@ -114,6 +114,35 @@ public class Player2D : MonoBehaviour
         charAnimator.SetFloat("LookX", playerLookDir.x);
         charAnimator.SetFloat("LookY", playerLookDir.y);
         charAnimator.SetFloat("Speed", rigidbody.velocity.magnitude);
+
+        //Decide if doing a vertical or horizontal animation
+        //Horizontal if magnitude of x > magnitude of y, and vice-versa
+        if(Mathf.Abs(playerLookDir.x) >= Mathf.Abs(playerLookDir.y)) //Horizontal animation
+        {
+            if(rigidbody.velocity.magnitude > 0 && playerLookDir.x > 0 && rigidbody.velocity.x < 0) //If velocity != look direction
+            {
+                //Play animation backwards
+                charAnimator.SetBool("PlayAnimBackwards", true);
+            }
+            else
+            {
+                //Play animation forwards, as usual
+                charAnimator.SetBool("PlayAnimBackwards", false);
+            }
+        }
+        else //Vertical animation
+        {
+            if (rigidbody.velocity.magnitude > 0 && playerLookDir.y > 0 && rigidbody.velocity.y < 0) //If velocity != look direction
+            {
+                //Play animation backwards
+                charAnimator.SetBool("PlayAnimBackwards", true);
+            }
+            else
+            {
+                //Play animation forwards, as usual
+                charAnimator.SetBool("PlayAnimBackwards", false);
+            }
+        }
     }
 
     //To be called by trigger colliders that are meant to deal damage to the player (bullets, boss melee, etc)
