@@ -10,14 +10,34 @@ public class Camera3D : MonoBehaviour
     public float verticalSensitivity;
     private float mouseX, mouseY;
     private float xRotation;
+    private bool introScene;
+    public float introLength;
+    public float introTimer;
+    private float introAngle;
+    public float introLookRate;
 
     private void Start()
     {
+        introScene = true;
         xRotation = 0f;
         Cursor.lockState = CursorLockMode.Locked;
+        followTarget.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+        introAngle = 90f;
     }
     void Update()
     {
+        //Slow player lookup at beginning of scene
+        if (introScene)
+        {
+            if (introAngle <= 0)
+            {
+                introScene = false;
+            }
+            followTarget.localRotation = Quaternion.Euler(introAngle, 0f, 0f);
+            introAngle -= introLookRate * Time.deltaTime;
+            return;
+        }
+
         //Getting mouse input
         mouseX = Input.GetAxis("Mouse X") * horizontalSensitivity * Time.deltaTime;
         mouseY = Input.GetAxis("Mouse Y") * verticalSensitivity * Time.deltaTime;
