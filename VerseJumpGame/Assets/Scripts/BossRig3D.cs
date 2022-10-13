@@ -96,13 +96,14 @@ public class BossRig3D : MonoBehaviour
         Debug.Log(spinSpeed);
 
         state = State.SCENE_START;
-        animator.SetTrigger("Idle");
 
         laser.SetActive(false);
         laserCharge.SetActive(false);
         swordHitbox.SetActive(false);
 
         bossCurrHealth = bossMaxHealth;
+
+        animator.SetTrigger("Idle");
 
     }
 
@@ -123,7 +124,6 @@ public class BossRig3D : MonoBehaviour
                 if (introTimer >= introLength)
                 {
                     state = State.IDLE;
-                    animator.SetTrigger("Idle");
                 }
                 introTimer += Time.deltaTime;
                 return;
@@ -137,7 +137,6 @@ public class BossRig3D : MonoBehaviour
         switch(state) {
             default:
                 state = State.IDLE;
-                animator.SetTrigger("Idle");
                 break;
 
             case State.IDLE:
@@ -146,26 +145,29 @@ public class BossRig3D : MonoBehaviour
             case State.CHARGE:
                 if(Time.time <= chargeTime + boostDuration + chargeDuration) {
                     gameObject.transform.Translate(Vector3.forward * Time.deltaTime * (dist/chargeDuration));
+                    animator.SetTrigger("Flying");
                 }
                 else{
                     state = State.IDLE;
-                    animator.SetTrigger("Idle");
                     attacking = false;
                     gameObject.transform.SetPositionAndRotation(new Vector3(
                         gameObject.transform.position.x, 3, gameObject.transform.position.z),
                         gameObject.transform.rotation);
                     passiveTracking = true;
+                    animator.SetTrigger("Idle");
+                    animator.ResetTrigger("Flying");
                 }
                 break;
 
             case State.BOOST_UP:
                 if(Time.time <= chargeTime + boostDuration) {
                     gameObject.transform.Translate(Vector3.up * Time.deltaTime * (boostHeight/boostDuration), Space.World);
+                    animator.SetTrigger("Flying");
                 }
                 else {
                     state = State.CHARGE;
-                    animator.SetTrigger("Flying");
                     dist = Vector3.Distance(targetDest.position, gameObject.transform.position);
+                    animator.SetTrigger("Flying");
                 }
                 break;
 
@@ -174,10 +176,11 @@ public class BossRig3D : MonoBehaviour
                 gameObject.transform.RotateAround(gameObject.transform.position, Vector3.up, spinSpeed * Time.deltaTime);
                 if (Time.time >= spinTime + spinDuration) {
                     state = State.IDLE;
-                    animator.SetTrigger("Idle");
                     attacking = false;
                     passiveTracking = true;
                     swordHitbox.SetActive(false);
+                    animator.ResetTrigger("Sword");
+                    animator.SetTrigger("Idle");
                 }
                 break;
 
@@ -205,7 +208,6 @@ public class BossRig3D : MonoBehaviour
                 else {
                     laser.SetActive(false);
                     state = State.IDLE;
-                    animator.SetTrigger("Idle");
                     attacking = false;
                 }
                 break;
@@ -267,7 +269,6 @@ public class BossRig3D : MonoBehaviour
 
         if(state == State.LASER_CHARGE) {
             state = State.IDLE;
-            animator.SetTrigger("Idle");
             laserCharge.SetActive(false);
             laser.SetActive(false);
             attacking = false;
@@ -293,7 +294,6 @@ public class BossRig3D : MonoBehaviour
             if (state == State.LASER_CHARGE)
             {
                 state = State.IDLE;
-                animator.SetTrigger("Idle");
                 laserCharge.SetActive(false);
                 laser.SetActive(false);
                 attacking = false;
@@ -345,12 +345,13 @@ public class BossRig3D : MonoBehaviour
             bulletInstance.velocity = gunOrigin.transform.forward * bulletSpeed;
             attacking = true;
             fired += 1;
-            Debug.Log("pew");
+            animator.SetTrigger("Shooting");
         }
         else {
             CancelInvoke("Gun");
             attacking = false;
             animator.SetTrigger("Idle");
+            animator.ResetTrigger("Shooting");
         }
     }
 
@@ -358,11 +359,11 @@ public class BossRig3D : MonoBehaviour
         Debug.Log("Charge!");
         attacking = true;
         state = State.BOOST_UP;
-        animator.SetTrigger("Flying");
         chargeTime = Time.time;
         passiveTracking = false;
         targetDest = player.transform;
         gameObject.transform.LookAt(player.transform.position);
+        animator.SetTrigger("Flying");
         
     }
 
