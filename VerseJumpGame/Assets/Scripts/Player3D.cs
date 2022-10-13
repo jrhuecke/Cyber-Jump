@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player3D : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class Player3D : MonoBehaviour
     public float invulnerability = 1f;
     private float invulnerabilityTimer;
     public List<GameObject> hearts;
+    public GameObject gameOvertext;
 
     //Jumping/falling variables
     public Transform groundCheck;
@@ -93,6 +95,21 @@ public class Player3D : MonoBehaviour
             }
         }
 
+        if (state == State.DEAD)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                SceneManager.LoadScene("3DScene");
+            }
+            return;
+        }
+
+        if (playerHealth3D <= 0)
+        {
+            gameOvertext.SetActive(true);
+            state = State.DEAD;
+            return;
+        }
 
         //checks if player is on ground by casting a sphere at players feet and seeing if that collides with the ground
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
