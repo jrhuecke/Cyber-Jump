@@ -14,13 +14,13 @@ useFullKinematicContacts is set to true. Maybe we can make this change later?
 
 public class Player2D : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public float speedMax = 8.0f;
-    Vector2 moveInput = Vector2.zero;
-    float fireInput = 0;
     Rigidbody2D rigidbody;
     SpriteRenderer sprite;
     Animator charAnimator;
+
+    public float speedMax = 8.0f;
+    Vector2 moveInput = Vector2.zero;
+    float fireInput = 0;
 
     Vector2 mousePos;
     public GameObject crosshair;
@@ -69,12 +69,14 @@ public class Player2D : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 converion = new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane);
-        crosshair.transform.position = Camera.main.ScreenToWorldPoint(converion);
+        
     }
 
     private void FixedUpdate()
     {
+        Vector3 converion = new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane);
+        crosshair.transform.position = Camera.main.ScreenToWorldPoint(converion);
+
         //Machine gun shooting
         if (fireInput > 0.0f && Time.time >= shootDelay)
         {
@@ -95,22 +97,35 @@ public class Player2D : MonoBehaviour
         rigidbody.velocity = conversion * speedMax;
 
         //Animation stuff
-        if (crosshair.transform.position.x > gameObject.transform.position.x)
+        /*if (crosshair.transform.position.x > gameObject.transform.position.x)
         {
             weaponRoot.transform.localScale = new Vector3(1, 1, 1);
         }
         else
         {
             weaponRoot.transform.localScale = new Vector3(1, -1, 1);
-        }
+        }*/
 
         //Gun + projectile rotation
+        /*This took a lot of corrections and adjustments to get right...*/
         Vector3 crosshair2Dpos = crosshair.transform.position;
         crosshair2Dpos.z = 0;
-        weaponRoot.transform.right = crosshair2Dpos - gameObject.transform.position;
+        weaponRoot.transform.LookAt(crosshair2Dpos);
+
+        Vector2 rootToCrosshair = crosshair2Dpos - weaponRoot.transform.position;
+        Debug.Log("First vector: " + rootToCrosshair);
+        Debug.Log("Second vector: " + Vector2.right);
+        float aimAngle = Vector2.SignedAngle(rootToCrosshair, Vector2.right);
+        Debug.Log(aimAngle);
+
+        /* (Trying to set weaponRoot.right
+         * When aiming to the exact left, the weaponRoot changes from using its Z rotation to using its Y rotation, which is why it flips along the Y axis
+         * compared to its default rotation.
+         */
+
 
         //Make player face the direction they're looking
-        Vector2 playerLookDir = weaponRoot.transform.right.normalized;
+        Vector2 playerLookDir = rootToCrosshair.normalized;
         charAnimator.SetFloat("LookX", playerLookDir.x);
         charAnimator.SetFloat("LookY", playerLookDir.y);
         charAnimator.SetFloat("Speed", rigidbody.velocity.magnitude);

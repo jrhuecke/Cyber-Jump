@@ -1,8 +1,29 @@
 fileFormatVersion: 2
-guid: 300133a5c7f5a184a9857d6c38a66c20
+guid: f88e5468b8e44eb4fad3ceb3796049e3
 ModelImporter:
   serializedVersion: 21300
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      74: 7133549710839269100
+    second: 01_robotArmature|01_robotArmatureAction.001
+  - first:
+      74: 5308585850841959718
+    second: 01_robotArmature|minigun_barrel_0.001Action
+  - first:
+      74: -5270584005685074453
+    second: 01_robotArmature|minigun_barrel_0.001Action.001
+  - first:
+      74: 5877824539822073621
+    second: 01_robotArmature|minigun_barrel_0Action
+  - first:
+      74: 7828250031083436477
+    second: 01_robotArmature|minigun_barrel_holder_0.001Action
+  - first:
+      74: -5089432058294053560
+    second: 01_robotArmature|minigun_barrel_holder_0.002Action
+  - first:
+      74: 1759391111508856110
+    second: 01_robotArmature|minigun_barrel_holder_0Action
   externalObjects: {}
   materials:
     materialImportMode: 2
