@@ -4362,7 +4362,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   introLength: 3
-  introBufferLength: 4
+  introBufferLength: 2
   healthMeter: {fileID: 719837419}
   bossMaxHealth: 1000
   bossCurrHealth: 0

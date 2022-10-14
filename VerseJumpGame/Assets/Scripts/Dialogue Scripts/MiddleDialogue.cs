@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class MiddleDialogue : MonoBehaviour
@@ -55,7 +56,11 @@ public class MiddleDialogue : MonoBehaviour
             else if((i-speech.Length) >= speech2.Length && (i-(speech.Length+speech2.Length)) < bothtext.Length)
                 Say(bothtext[i-(speech.Length+speech2.Length)]);
             else
-                DialogueSystem.instance.Close();
+            {
+                SceneManager.LoadScene("3DScene");
+                
+            }
+                
             print((i-speech.Length)+1 < speech2.Length);
             i++;
         }

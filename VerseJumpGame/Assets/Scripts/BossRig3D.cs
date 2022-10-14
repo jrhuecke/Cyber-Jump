@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 /*my idea is that each attack will be a function.
 the attacks can be placed in a queue via name/id number and called in order.
@@ -141,6 +142,10 @@ public class BossRig3D : MonoBehaviour
         {
             healthMeter.localScale = new Vector3((.119f * bossCurrHealth) + 5, 5, 5);
             healthMeter.localPosition = new Vector3((.238f * bossCurrHealth) - 238, -500, 0);
+        }
+        else
+        {
+            SceneManager.LoadScene("EndDialogueScene");
         }
 
 
