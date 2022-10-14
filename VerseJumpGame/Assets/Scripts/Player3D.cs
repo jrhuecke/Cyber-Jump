@@ -69,7 +69,6 @@ public class Player3D : MonoBehaviour
     private float secondaryFireWindUpTimer;
     private float secondaryFireTimer;
     public float secondaryFireLength = 1.5f;
-    public List<GameObject> chargeBar;
     public Transform chargeMeter;
 
     private void Start()
