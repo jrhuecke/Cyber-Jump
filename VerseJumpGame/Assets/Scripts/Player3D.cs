@@ -70,6 +70,8 @@ public class Player3D : MonoBehaviour
     private float secondaryFireTimer;
     public float secondaryFireLength = 1.5f;
     public Transform chargeMeter;
+    public GameObject crosshair;
+    public GameObject chargeBar;
 
     private void Start()
     {
@@ -114,6 +116,9 @@ public class Player3D : MonoBehaviour
         {
             gameOvertext.SetActive(true);
             laserObject.SetActive(false);
+            chargeMeter.gameObject.SetActive(false);
+            crosshair.SetActive(false);
+            chargeBar.SetActive(false);
             state = State.DEAD;
             return;
         }

@@ -689,10 +689,12 @@ MonoBehaviour:
   bulletSpeed: 30
   bulletFireRate: 0.2
   secondaryFireCharge: 0
-  secondaryFireMaxCharge: 100
+  secondaryFireMaxCharge: 22
   secondaryFireWindUp: 0.5
   secondaryFireLength: 1.5
-  chargeMeter: {fileID: 0}
+  chargeMeter: {fileID: 730954629}
+  crosshair: {fileID: 1494375567}
+  chargeBar: {fileID: 485477092}
 --- !u!143 &295178363
 CharacterController:
   m_ObjectHideFlags: 0
