@@ -17,6 +17,12 @@ public class Player3D : MonoBehaviour
 
     State state;
 
+    //Audio
+    public AudioSource audioSource;
+    public AudioClip laserAudio;
+    public AudioClip gunAudio;
+    public AudioClip hitAudio;
+
     //Start of scene variables
     public float introLength;
     private float introTimer;
@@ -63,7 +69,9 @@ public class Player3D : MonoBehaviour
     private float secondaryFireWindUpTimer;
     private float secondaryFireTimer;
     public float secondaryFireLength = 1.5f;
-    
+    public Transform chargeMeter;
+    public GameObject crosshair;
+    public GameObject chargeBar;
 
     private void Start()
     {
@@ -107,6 +115,10 @@ public class Player3D : MonoBehaviour
         if (playerHealth3D <= 0)
         {
             gameOvertext.SetActive(true);
+            laserObject.SetActive(false);
+            chargeMeter.gameObject.SetActive(false);
+            crosshair.SetActive(false);
+            chargeBar.SetActive(false);
             state = State.DEAD;
             return;
         }
@@ -152,6 +164,13 @@ public class Player3D : MonoBehaviour
             invulnerabilityTimer -= Time.deltaTime;
         }
 
+        //updates charge meter UI
+        if (secondaryFireCharge <= 22)
+        {
+            chargeMeter.localScale = new Vector3(0.4f + (secondaryFireCharge * 0.41f), 0.4f, 0.4f);
+            chargeMeter.localPosition = new Vector3((-66 + (secondaryFireCharge * 3f)), -50, 0);
+        }
+        
         //state machine for player's shooting
         switch (state)
         {
@@ -186,12 +205,19 @@ public class Player3D : MonoBehaviour
             case State.SECONDARY_WIND_UP:
                 //Charge up time before secondary fire goes off
                 secondaryFireWindUpTimer -= Time.deltaTime;
+                secondaryFireCharge = 0;
                 if (secondaryFireWindUpTimer <= 0)
                 {
                     secondaryFireWindUpTimer = secondaryFireWindUp;
                     secondaryFireTimer = secondaryFireLength;
                     laserObject.SetActive(true);
                     state = State.SECONDARY_FIRE;
+
+                    //resets charge meter
+                    chargeMeter.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+                    chargeMeter.localPosition = new Vector3(-66, -50, 0);
+
+                    audioSource.PlayOneShot(laserAudio);
                 }
                 break;
 
@@ -200,8 +226,10 @@ public class Player3D : MonoBehaviour
                 if (secondaryFireTimer <= 0)
                 {
                     laserObject.SetActive(false);
+                    secondaryFireCharge = 0;
                     state = State.WAITING;
                 }
+                secondaryFireCharge = 0;
                 secondaryFireTimer -= Time.deltaTime;
                 secondaryFire();
                 break;
@@ -252,6 +280,8 @@ public class Player3D : MonoBehaviour
         //attaches the player3D script to the bullet, so it can access the secondary charge variable
         Bullet3D bulletScript = bullet.GetComponent<Bullet3D>();
         bulletScript.player3D = this;
+
+        audioSource.PlayOneShot(gunAudio);
     }
 
     private void secondaryFire()
@@ -286,6 +316,8 @@ public class Player3D : MonoBehaviour
             if (playerHealth3D >= 0)
             {
                 hearts[Mathf.FloorToInt(playerHealth3D)].SetActive(false);
+
+                audioSource.PlayOneShot(hitAudio);
             } 
         }
     }
