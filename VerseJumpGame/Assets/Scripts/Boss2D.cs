@@ -275,7 +275,7 @@ public class Boss2D : MonoBehaviour
             chargeTarget.transform.position = player.transform.position + (weaponRoot.transform.right.normalized * chargeOvershoot);
 
             animPlayer.SetInteger("Behavior", 2);
-            animPlayer.SetInteger("chargePhase", 0);
+            animPlayer.SetInteger("ChargePhase", 0);
             waitTillTime = Time.time + chargeStartupTime; //Do the startup animation for x seconds
 
             chargePhase = 0;
