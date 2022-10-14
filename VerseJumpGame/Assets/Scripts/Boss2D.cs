@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Boss2D : MonoBehaviour
 {
@@ -84,6 +85,10 @@ public class Boss2D : MonoBehaviour
         {
             bossMeter.localPosition = new Vector3(240 * (bossHealth / maxBossHealth) - 240, bossMeter.localPosition.y, bossMeter.localPosition.z);
             bossMeter.localScale = new Vector3(241 * (bossHealth / maxBossHealth) + 7, bossMeter.localScale.y, bossMeter.localScale.z);
+        }
+        else
+        {
+            SceneManager.LoadScene("MiddleDialogueScene");
         }
 
 

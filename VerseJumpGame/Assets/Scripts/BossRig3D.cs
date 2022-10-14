@@ -147,8 +147,8 @@ public class BossRig3D : MonoBehaviour
         //Updates boss health UI
         if (bossCurrHealth >= 0)
         {
-            healthMeter.localScale = new Vector3((.119f * bossCurrHealth) + 5, 5, 5);
-            healthMeter.localPosition = new Vector3((.238f * bossCurrHealth) - 238, -500, 0);
+            healthMeter.localScale = new Vector3(119 * (bossCurrHealth / bossMaxHealth) + 5, healthMeter.localScale.y, healthMeter.localScale.z);
+            healthMeter.localPosition = new Vector3(238 * (bossCurrHealth/ bossMaxHealth) - 238, -500, 0);
         }
         else
         {
