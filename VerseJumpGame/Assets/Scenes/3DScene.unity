@@ -2515,6 +2515,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: -6722085885383957590, guid: 338ae2411b9495b44b9d3d9d337e8406, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -4176129057126922813, guid: 338ae2411b9495b44b9d3d9d337e8406, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -4421,18 +4425,18 @@ MonoBehaviour:
   introLength: 3
   introBufferLength: 2
   healthMeter: {fileID: 719837419}
-  bossMaxHealth: 1000
+  bossMaxHealth: 500
   bossCurrHealth: 0
   playerBulletDamage: 2
   playerLaserDamage: 30
-  attackRate: 3
-  gunShots: 3
+  attackRate: 2
+  gunShots: 5
   bulletSpeed: 30
-  shotInterval: 0.3
-  spinDuration: 1
+  shotInterval: 0.2
+  spinDuration: 0.6
   boostHeight: 3
-  boostDuration: 0.5
-  chargeDuration: 2
+  boostDuration: 0.3
+  chargeDuration: 1.2
   laserChargeDuration: 1
   bulletPrefab: {fileID: 3688718229346584139, guid: 099b1f347d101ba4b9137d4436a029f6, type: 3}
   player: {fileID: 295178361}
