@@ -56,6 +56,10 @@ public class Boss2D : MonoBehaviour
     public AudioClip chargeSound;
     public AudioClip slashSound;
 
+    private float bossHealth;
+    public float maxBossHealth;
+    public Transform bossMeter;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -63,6 +67,7 @@ public class Boss2D : MonoBehaviour
         sprite = gameObject.GetComponent<SpriteRenderer>();
         rigidbod = gameObject.GetComponent<Rigidbody2D>();
         doNotAttackTill = Time.time + attackInterval;
+        bossHealth = maxBossHealth;
     }
 
     void FixedUpdate()
@@ -73,6 +78,15 @@ public class Boss2D : MonoBehaviour
         //The attacks that are chosen randomly/in some sort of sequence will be put into a list to choose from.
         //Special behavior may include simply moving to a new position, in which case they will not execute an attack until they have finished
         //moving, even if the attack interval is already finished (this does mean however they will attack the MOMENT they finish moving)
+
+        //Updates boss health UI
+        if (bossHealth >= 0)
+        {
+            bossMeter.localPosition = new Vector3(240 * (bossHealth / maxBossHealth) - 240, bossMeter.localPosition.y, bossMeter.localPosition.z);
+            bossMeter.localScale = new Vector3(241 * (bossHealth / maxBossHealth) + 7, bossMeter.localScale.y, bossMeter.localScale.z);
+        }
+
+
 
         if(currentBehavior == Behavior.None)
         {
@@ -316,6 +330,7 @@ public class Boss2D : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        bossHealth -= damage;
         Debug.Log("Boss took " + damage + " damage!");
     }
 
