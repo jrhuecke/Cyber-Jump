@@ -71,6 +71,13 @@ public class BossRig3D : MonoBehaviour
     public GameObject weakPoint;
     public Animator animator;
 
+    //audio
+    public AudioSource audioSource;
+    public AudioClip chargeSound;
+    public AudioClip slashSound;
+    public AudioClip laserSound;
+    public AudioClip gunSound;
+
     private enum State {
         CHARGE,
         BOOST_UP,
@@ -162,6 +169,10 @@ public class BossRig3D : MonoBehaviour
                 if(Time.time <= chargeTime + boostDuration + chargeDuration) {
                     gameObject.transform.Translate(Vector3.forward * Time.deltaTime * (dist/chargeDuration));
                     animator.SetTrigger("Flying");
+                    if (!audioSource.isPlaying)
+                    {
+                        audioSource.PlayOneShot(chargeSound);
+                    }
                 }
                 else{
                     state = State.IDLE;
@@ -258,6 +269,7 @@ public class BossRig3D : MonoBehaviour
                         break;
                     case Attack.LASER:
                         Laser();
+                        audioSource.PlayOneShot(laserSound);
                         break;
                     default: 
                         Debug.Log("Failed to find attack function");
@@ -362,6 +374,7 @@ public class BossRig3D : MonoBehaviour
             attacking = true;
             fired += 1;
             animator.SetTrigger("Shooting");
+            audioSource.PlayOneShot(gunSound);
         }
         else {
             CancelInvoke("Gun");
@@ -389,6 +402,8 @@ public class BossRig3D : MonoBehaviour
         spinTime = Time.time;
         state = State.SPIN;
         animator.SetTrigger("Sword");
+
+        audioSource.PlayOneShot(slashSound);
         
     }
 
