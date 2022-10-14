@@ -381,12 +381,12 @@ TextureImporter:
       name: Boss Sprite Sheet_13
       rect:
         serializedVersion: 2
-        x: 118
+        x: 117
         y: 255
-        width: 97
+        width: 98
         height: 49
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.48979592}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -394,6 +394,90 @@ TextureImporter:
       bones: []
       spriteID: e0f932bf4124c4649bb841a3b1eb2b31
       internalID: 1705023292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Sprite Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 156
+        width: 80
+        height: 62
+      alignment: 9
+      pivot: {x: 0.525, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 506fb167c801e6749ada094313511258
+      internalID: 1745264625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Sprite Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 156
+        width: 80
+        height: 62
+      alignment: 9
+      pivot: {x: 0.525, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c5cb76ac3d090f4bbb5e334c9353d0b
+      internalID: 433797551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Sprite Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 156
+        width: 80
+        height: 62
+      alignment: 9
+      pivot: {x: 0.525, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60f825bd683ba664cb64637137756746
+      internalID: 61104119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Boss Sprite Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 156
+        width: 80
+        height: 62
+      alignment: 9
+      pivot: {x: 0.525, y: 0.516129}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d27fb7e9298b45a4f8882c4ebb7d509b
+      internalID: -675655701
       vertices: []
       indices: 
       edges: []
@@ -412,9 +496,12 @@ TextureImporter:
       Boss Sprite Sheet_10: 1837637260
       Boss Sprite Sheet_2: -1433559202
       Boss Sprite Sheet_12: 1586294681
+      Boss Sprite Sheet_16: 61104119
+      Boss Sprite Sheet_14: 1745264625
       Boss Sprite Sheet_4: 2140722376
       Boss Sprite Sheet_1: -2110177373
       Boss Sprite Sheet_0: -312385389
+      Boss Sprite Sheet_15: 433797551
       Boss Sprite Sheet_3: -1679507916
       Boss Sprite Sheet_8: 844715110
       Boss Sprite Sheet_11: 1153865919
@@ -422,6 +509,7 @@ TextureImporter:
       Boss Sprite Sheet_7: 1486672493
       Boss Sprite Sheet_9: -174764195
       Boss Sprite Sheet_13: 1705023292
+      Boss Sprite Sheet_17: -675655701
       Boss Sprite Sheet_5: -1773295942
   spritePackingTag: 
   pSDRemoveMatte: 0

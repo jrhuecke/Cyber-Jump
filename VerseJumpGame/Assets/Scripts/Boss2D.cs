@@ -274,7 +274,8 @@ public class Boss2D : MonoBehaviour
             chargeTarget = Instantiate(chargeTargetPrefab);
             chargeTarget.transform.position = player.transform.position + (weaponRoot.transform.right.normalized * chargeOvershoot);
 
-            animPlayer.Play("BossChargeStartup");
+            animPlayer.SetInteger("Behavior", 2);
+            animPlayer.SetInteger("chargePhase", 0);
             waitTillTime = Time.time + chargeStartupTime; //Do the startup animation for x seconds
 
             chargePhase = 0;
@@ -282,10 +283,11 @@ public class Boss2D : MonoBehaviour
         }
         if(Time.time > waitTillTime)
         {
-            if (chargePhase == 0) //Could replace with switch
+            if (chargePhase == 0) //Wait timer on charge startup has just finished
             {
                 rigidbod.velocity = weaponRoot.transform.right.normalized * chargeSpeed;
-                animPlayer.Play("BossIdle");
+                animPlayer.SetInteger("ChargePhase", 1);
+                chargePhase = 1;
             }
             else if(chargePhase == 1)
             {
@@ -296,6 +298,7 @@ public class Boss2D : MonoBehaviour
             {
                 //Finished turn-around.
                 Debug.Log("Finished charge attack");
+                animPlayer.SetInteger("ChargePhase", 0);
                 audioSource.Stop();
                 return BehaviorResult.Success;
             }
@@ -303,6 +306,8 @@ public class Boss2D : MonoBehaviour
         else if(lastFrameResult == BehaviorResult.Running)
         {
             //Timer is active but the last behavior result was Running, meaning that is currently on the wait before turn-around
+            //NO IT ISN'T! This area will activate during the first timer for the charge start-up!
+            //Well, it's both really
         }
 
         return BehaviorResult.Running;
@@ -319,16 +324,18 @@ public class Boss2D : MonoBehaviour
 
     public void StopCharging(bool hitWall)
     {
-
         rigidbod.velocity = Vector2.zero;
         chargePhase = 2;
         Destroy(chargeTarget.gameObject);
         chargeTarget = null;
 
+        animPlayer.SetInteger("ChargePhase", 2);
+        animPlayer.SetInteger("Behavior", 0);
+
         if (hitWall)
-            waitTillTime = Time.time + 1.0f; //If hit wall, create a screen-shake
+            waitTillTime = Time.time + 0.5f; //If hit wall, create a screen-shake
         else
-            waitTillTime = Time.time + 0.5f;
+            waitTillTime = Time.time + 0.0f;
     }
 
     //Later when the boss is defeated or switches phase - whatever the current behavior is must be interrupted.
