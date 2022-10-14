@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18377084, g: 0.22913456, b: 0.30443513, a: 1}
+  m_IndirectSpecularColor: {r: 0.18377098, g: 0.22913438, b: 0.30443472, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -755,6 +755,7 @@ MonoBehaviour:
   chargeMeter: {fileID: 730954629}
   crosshair: {fileID: 1494375567}
   chargeBar: {fileID: 485477092}
+  animator: {fileID: 1191763864}
 --- !u!143 &295178363
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1429,7 +1430,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 586930375}
   m_LocalRotation: {x: -0.04893535, y: 0.6902969, z: -0.046865705, w: -0.72034657}
-  m_LocalPosition: {x: 0.8, y: 2.18, z: -10.25}
+  m_LocalPosition: {x: -0.8, y: 2.431, z: -10.305}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1451,8 +1452,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTF: {fileID: 295178364}
   followTarget: {fileID: 1507364929}
-  horizontalSensitivity: 600
-  verticalSensitivity: 500
+  horizontalSensitivity: 500
+  verticalSensitivity: 400
   introLength: 3
   introTimer: 0
   introLookRate: 30
@@ -2664,7 +2665,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 978088210}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.576, y: -0.008, z: 2.723}
+  m_LocalPosition: {x: -0.439, y: -0.667, z: 2.001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3207,7 +3208,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1186365098}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.00000035762787, y: 0, z: 0.46}
+  m_LocalPosition: {x: -0.00000035762787, y: 0, z: 0.289}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3370,6 +3371,18 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8e0ac988acc8cf9468d0b290750822a3, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8e0ac988acc8cf9468d0b290750822a3, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8e0ac988acc8cf9468d0b290750822a3, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8e0ac988acc8cf9468d0b290750822a3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -3506,6 +3519,11 @@ PrefabInstance:
 --- !u!4 &1191763863 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8e0ac988acc8cf9468d0b290750822a3, type: 3}
+  m_PrefabInstance: {fileID: 1191763862}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1191763864 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 8e0ac988acc8cf9468d0b290750822a3, type: 3}
   m_PrefabInstance: {fileID: 1191763862}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1301065951 stripped
@@ -3960,7 +3978,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 6239675976650646168, guid: 8e0ac988acc8cf9468d0b290750822a3, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4161,7 +4179,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1507364928}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.68, z: 0}
+  m_LocalPosition: {x: 0, y: 0.931, z: -0.055}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4247,7 +4265,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1525699888}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.8, y: 2.18, z: -10.25}
+  m_LocalPosition: {x: -0.8, y: 2.431, z: -10.305}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4965,7 +4983,7 @@ MonoBehaviour:
   Damping: {x: 0.1, y: 0.5, z: 0.3}
   ShoulderOffset: {x: 0.8, y: -0.4, z: 0}
   VerticalArmLength: 0.4
-  CameraSide: 1
+  CameraSide: 0
   CameraDistance: 2.5
   CameraCollisionFilter:
     serializedVersion: 2

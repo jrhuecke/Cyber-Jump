@@ -8,6 +8,8 @@ public class Player3D : MonoBehaviour
     enum State
     {
         WAITING,
+        RUNNING,
+        JUMPING,
         PRIMARY_FIRE,
         SECONDARY_WIND_UP,
         SECONDARY_FIRE,
@@ -15,7 +17,15 @@ public class Player3D : MonoBehaviour
         DEAD
     }
 
+    enum animState
+    {
+        WAITING,
+        RUNNING,
+        JUMPING,
+    }
+
     State state;
+    animState anim;
 
     //Audio
     public AudioSource audioSource;
@@ -72,6 +82,9 @@ public class Player3D : MonoBehaviour
     public Transform chargeMeter;
     public GameObject crosshair;
     public GameObject chargeBar;
+
+    //animation
+    public Animator animator;
 
     private void Start()
     {
@@ -170,7 +183,41 @@ public class Player3D : MonoBehaviour
             chargeMeter.localScale = new Vector3(0.4f + (secondaryFireCharge * 0.41f), 0.4f, 0.4f);
             chargeMeter.localPosition = new Vector3((-66 + (secondaryFireCharge * 3f)), -50, 0);
         }
-        
+
+        //state machine for animations
+        switch(anim)
+        {
+            case animState.WAITING:
+                if (velocity.y > 0)
+                {
+                    anim = animState.JUMPING;
+                    animator.SetTrigger("Jumping");
+                }
+                else if (velocity.x != 0|| velocity.z != 0)
+                {
+                    anim = animState.RUNNING;
+                    animator.SetTrigger("Running");
+                }
+                break;
+
+            case animState.RUNNING:
+                if (velocity.x == 0 && velocity.z == 0)
+                {
+                    anim = animState.WAITING;
+                    animator.SetTrigger("Idle");
+                }
+                break;
+
+            case animState.JUMPING:
+                if (isGrounded)
+                {
+                    anim = animState.WAITING;
+                    animator.SetTrigger("Idle");
+                }
+                break;
+        }
+
+
         //state machine for player's shooting
         switch (state)
         {
