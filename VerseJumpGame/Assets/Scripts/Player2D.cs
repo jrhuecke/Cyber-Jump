@@ -91,7 +91,7 @@ public class Player2D : MonoBehaviour
             //Spread feels a little off...but it does what it's supposed to do
             float randomDegrees = Random.Range(-randomSpreadMG, randomSpreadMG);
             bulletInstance.transform.Rotate(new Vector3(0, 0, randomDegrees));
-            Debug.Log(randomDegrees);
+            //Debug.Log(randomDegrees);
 
             bulletInstance.velocity = bulletInstance.transform.right * bulletSpeed;
             bulletInstance.gameObject.GetComponent<DamageBoss2D>().DamageToBoss = bulletDamage;

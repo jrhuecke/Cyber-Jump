@@ -79,7 +79,9 @@ public class Boss2D : MonoBehaviour
             if (Time.time >= doNotAttackTill)
                 currentBehavior = chooseAttack(); //Replace w/ function that chooses an attack
             else
-                LookAtPlayer();
+            {
+                //LookAtPlayer();
+            }
         }
         if(currentBehavior != Behavior.None)
         {
@@ -113,6 +115,7 @@ public class Boss2D : MonoBehaviour
                     currentBehavior = Behavior.None;
                     doNotAttackTill = Time.time + attackInterval;
                 }
+                animPlayer.SetInteger("Behavior", 0);
             }
         }
     }
@@ -162,12 +165,12 @@ public class Boss2D : MonoBehaviour
         //First time call
         if(lastFrameResult != BehaviorResult.Running)
         {
-            LookAtPlayer();
+            //LookAtPlayer();
             Debug.Log("Started sword slashes");
-            weaponRoot.transform.right = player.transform.position - gameObject.transform.position;
-
             repeatActionCounter = 0;
             repeatThisMany = Mathf.FloorToInt(rng.Next(min, max));
+            animPlayer.SetInteger("Behavior", 1);
+            swingingSword = true;
         }
 
         if(repeatActionCounter >= repeatThisMany)
@@ -179,8 +182,10 @@ public class Boss2D : MonoBehaviour
         {
             if (repeatActionCounter % 2 == 0) //Counter is even (will start here b/c counter starts at 0)
             {
-                animPlayer.Play("BossSwingSwordLeftRight", -1, 0);
+                animPlayer.SetTrigger("SwingSword");
                 BulletSpread2D bulletSpreadOdd = Instantiate(bulletSpread, weaponRoot.transform);
+                bulletSpreadOdd.transform.position += weaponRoot.transform.right.normalized * 2f;
+
                 bulletSpreadOdd.bulletSpeed = bulletSpreadSpeed;
                 bulletSpreadOdd.numOfBullets = bulletSpeadCountOdd;
                 bulletSpreadOdd.sphereRadius = spreadSphereRadius;
@@ -189,8 +194,10 @@ public class Boss2D : MonoBehaviour
             }
             else
             {
-                animPlayer.Play("BossSwingSwordRightLeft", -1, 0);
+                animPlayer.SetTrigger("SwingSword");
                 BulletSpread2D bulletSpreadEven = Instantiate(bulletSpread, weaponRoot.transform);
+                bulletSpreadEven.transform.position += weaponRoot.transform.right.normalized * 2f;
+
                 bulletSpreadEven.bulletSpeed = bulletSpreadSpeed;
                 bulletSpreadEven.numOfBullets = bulletSpeadCountOdd - 1;
                 bulletSpreadEven.sphereRadius = spreadSphereRadius;
@@ -204,12 +211,23 @@ public class Boss2D : MonoBehaviour
         return BehaviorResult.Running;
     }
 
+    void finishedSwordStartup()
+    {
+        weaponRoot.transform.right = player.transform.position - gameObject.transform.position;
+        swingingSword = false;
+    }
+
     //Called when sword slash anim finishes
     void finishedSwordSlash()
     {
         //Debug.Log("Finished sword slash animation");
         repeatActionCounter += 1;
         swingingSword = false;
+    }
+
+    void returnToIdle()
+    {
+        animPlayer.SetTrigger("SwingSword");
     }
 
     BehaviorResult chargeAndTurn()
@@ -230,7 +248,7 @@ public class Boss2D : MonoBehaviour
 
         if(lastFrameResult != BehaviorResult.Running) //First time call
         {
-            LookAtPlayer();
+            //LookAtPlayer();
             Debug.Log("Started charge attack");
             weaponRoot.transform.right = player.transform.position - gameObject.transform.position;
             //Spawn a target position, store a refernce to it so it can be destroyed later

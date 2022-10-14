@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 /*my idea is that each attack will be a function.
 the attacks can be placed in a queue via name/id number and called in order.
@@ -25,9 +26,12 @@ public class BossRig3D : MonoBehaviour
     public float introBufferLength;
     private float introBufferTimer;
 
+    //UI
+    public Transform healthMeter;
+
     private Queue<Attack> bossQ;
     [SerializeField] float bossMaxHealth = 1000;
-    private float bossCurrHealth;
+    public float bossCurrHealth;
     [SerializeField] float playerBulletDamage = 2;
     [SerializeField] float playerLaserDamage = 1;
     [SerializeField] float attackRate = 3.0f; //at minimum 3 sec delay between attacks
@@ -133,8 +137,20 @@ public class BossRig3D : MonoBehaviour
         //boss looking at player when enabled
         if (passiveTracking) {gameObject.transform.LookAt(player.transform.position);}
 
+        //Updates boss health UI
+        if (bossCurrHealth >= 0)
+        {
+            healthMeter.localScale = new Vector3((.119f * bossCurrHealth) + 5, 5, 5);
+            healthMeter.localPosition = new Vector3((.238f * bossCurrHealth) - 238, -500, 0);
+        }
+        else
+        {
+            SceneManager.LoadScene("EndDialogueScene");
+        }
+
+
         //boss attack state machine
-        switch(state) {
+        switch (state) {
             default:
                 state = State.IDLE;
                 break;

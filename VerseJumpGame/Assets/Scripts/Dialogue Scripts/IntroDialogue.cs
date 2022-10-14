@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class IntroDialogue : MonoBehaviour
 {
@@ -56,7 +57,7 @@ public class IntroDialogue : MonoBehaviour
             else if((i-speech.Length) >= speech2.Length && (i-(speech.Length+speech2.Length)) < bothtext.Length)
                 Say(bothtext[i-(speech.Length+speech2.Length)]);
             else
-                DialogueSystem.instance.Close();
+                SceneManager.LoadScene("2DScene");
             print((i-speech.Length)+1 < speech2.Length);
             i++;
         }
