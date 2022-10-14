@@ -72,12 +72,6 @@ public class Player2D : MonoBehaviour
         mousePos = value.Get<Vector2>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void FixedUpdate()
     {
         Vector3 converion = new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane);
@@ -129,12 +123,17 @@ public class Player2D : MonoBehaviour
 
         //Make player face the direction they're looking
         Vector2 playerLookDir = rootToCrosshair.normalized;
-        charAnimator.SetFloat("LookX", playerLookDir.x);
-        charAnimator.SetFloat("LookY", playerLookDir.y);
+        
         charAnimator.SetFloat("Speed", rigidbody.velocity.magnitude);
+        if(rigidbody.velocity.magnitude > 0)
+        {
+            charAnimator.SetFloat("LookX", rigidbody.velocity.x);
+            charAnimator.SetFloat("LookY", rigidbody.velocity.y);
+        }
 
         //Decide if doing a vertical or horizontal animation
         //Horizontal if magnitude of x > magnitude of y, and vice-versa
+        /*
         if(Mathf.Abs(playerLookDir.x) >= Mathf.Abs(playerLookDir.y)) //Horizontal animation
         {
             if(rigidbody.velocity.magnitude > 0 && playerLookDir.x > 0 && rigidbody.velocity.x < 0) //If velocity != look direction
@@ -160,7 +159,7 @@ public class Player2D : MonoBehaviour
                 //Play animation forwards, as usual
                 charAnimator.SetBool("PlayAnimBackwards", false);
             }
-        }
+        }*/
     }
 
     //To be called by trigger colliders that are meant to deal damage to the player (bullets, boss melee, etc)
