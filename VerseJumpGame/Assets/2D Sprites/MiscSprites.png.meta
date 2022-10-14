@@ -314,6 +314,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: MiscSprites_10
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 160
+        width: 14
+        height: 14
+      alignment: 9
+      pivot: {x: 0.2857143, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2bbbbe7231cfc8c4e81930cc804dfefb
+      internalID: -1222100921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -325,6 +346,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      MiscSprites_10: -1222100921
       MiscSprites_5: -351962237
       MiscSprites_8: 258278026
       MiscSprites_6: 1212093654
