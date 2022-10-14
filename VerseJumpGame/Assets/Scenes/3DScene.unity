@@ -4365,8 +4365,9 @@ MonoBehaviour:
   introBufferLength: 4
   healthMeter: {fileID: 719837419}
   bossMaxHealth: 1000
+  bossCurrHealth: 0
   playerBulletDamage: 2
-  playerLaserDamage: 1
+  playerLaserDamage: 30
   attackRate: 3
   gunShots: 3
   bulletSpeed: 30
