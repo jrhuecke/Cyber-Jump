@@ -2510,7 +2510,7 @@ PrefabInstance:
     - target: {fileID: -8211498817672797435, guid: 338ae2411b9495b44b9d3d9d337e8406, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: e34fb054d4aedfa45826262498b650f0, type: 2}
+      objectReference: {fileID: 2100000, guid: 35700ef448b43a840964724bff82d057, type: 2}
     - target: {fileID: -7473865809858853656, guid: 338ae2411b9495b44b9d3d9d337e8406, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -2530,7 +2530,7 @@ PrefabInstance:
     - target: {fileID: 908621080568500202, guid: 338ae2411b9495b44b9d3d9d337e8406, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: e34fb054d4aedfa45826262498b650f0, type: 2}
+      objectReference: {fileID: 2100000, guid: 137732ffd2e806446b5a2648565aa88e, type: 2}
     - target: {fileID: 919132149155446097, guid: 338ae2411b9495b44b9d3d9d337e8406, type: 3}
       propertyPath: m_Name
       value: 3DArena
@@ -2542,7 +2542,7 @@ PrefabInstance:
     - target: {fileID: 978105409089321652, guid: 338ae2411b9495b44b9d3d9d337e8406, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: e34fb054d4aedfa45826262498b650f0, type: 2}
+      objectReference: {fileID: 2100000, guid: 35700ef448b43a840964724bff82d057, type: 2}
     - target: {fileID: 4795031663804055248, guid: 338ae2411b9495b44b9d3d9d337e8406, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -2550,7 +2550,7 @@ PrefabInstance:
     - target: {fileID: 5226225326957907194, guid: 338ae2411b9495b44b9d3d9d337e8406, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: e34fb054d4aedfa45826262498b650f0, type: 2}
+      objectReference: {fileID: 2100000, guid: 137732ffd2e806446b5a2648565aa88e, type: 2}
     - target: {fileID: 6493138017146441424, guid: 338ae2411b9495b44b9d3d9d337e8406, type: 3}
       propertyPath: m_Layer
       value: 10
