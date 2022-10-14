@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 /*
  NOTE: Some code here for the animator is based on an older sprite I was using that had multiple rotations,
@@ -23,6 +24,7 @@ public class Player2D : MonoBehaviour
     float fireInput = 0;
     private int playerHealth = 4;
     public List<GameObject> hearts;
+    public GameObject gameOverText;
 
     Vector2 mousePos;
     public GameObject crosshair;
@@ -59,11 +61,15 @@ public class Player2D : MonoBehaviour
     {
         fireInput = value.Get<float>();
         Cursor.visible = false;
+        if (playerHealth <= 0)
+            fireInput = 0;
     }
 
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+        if (playerHealth <= 0)
+            moveInput = Vector2.zero;
     }
 
     /*Alt method of controlling crosshair: Make a second Input Action Asset (since I think each one is a player?)*/
@@ -72,13 +78,21 @@ public class Player2D : MonoBehaviour
         mousePos = value.Get<Vector2>();
     }
 
+    void OnRestart(InputValue value)
+    {
+        if(playerHealth <= 0)
+        {
+            SceneManager.LoadScene("2DScene");
+        }
+    }
+
     private void FixedUpdate()
     {
         Vector3 converion = new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane);
         crosshair.transform.position = Camera.main.ScreenToWorldPoint(converion);
 
         //Machine gun shooting
-        if (fireInput > 0.0f && Time.time >= shootDelay)
+        if (fireInput > 0.0f && Time.time >= shootDelay && playerHealth > 0)
         {
             Rigidbody2D bulletInstance = Instantiate(bulletPrefab, projectileOrigin.transform.position, projectileOrigin.transform.rotation);
 
@@ -105,7 +119,10 @@ public class Player2D : MonoBehaviour
         /*This took a lot of corrections and adjustments to get right...*/
         Vector3 crosshair2Dpos = crosshair.transform.position;
         crosshair2Dpos.z = 0;
-        weaponRoot.transform.LookAt(crosshair2Dpos);
+        if (playerHealth > 0)
+        {
+            weaponRoot.transform.LookAt(crosshair2Dpos);
+        }
 
         Vector2 rootToCrosshair = crosshair2Dpos - weaponRoot.transform.position;
         float aimAngle = Vector2.SignedAngle(rootToCrosshair, Vector2.right);
@@ -174,7 +191,14 @@ public class Player2D : MonoBehaviour
                 playerHealth -= damage;
                 hearts[playerHealth].SetActive(false);
 
-                audioSource.PlayOneShot(hitSound);
+                audioSource.PlayOneShot(hitSound, 10.0f);
+
+                if(playerHealth <= 0) //DED
+                {
+                    gameOverText.SetActive(true);
+                    fireInput = 0;
+                    moveInput = Vector2.zero;
+                }
             }
             endiFrames = Time.time + iFrames;
         }
