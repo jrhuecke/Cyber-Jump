@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BossChargeStartup
+  m_Name: BossCharge
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -20,8 +20,6 @@ AnimationClip:
   m_PPtrCurves:
   - curve:
     - time: 0
-      value: {fileID: -675655701, guid: 9f291013d543d0e41a300c7e3e3a59eb, type: 3}
-    - time: 0.1
       value: {fileID: 61104119, guid: 9f291013d543d0e41a300c7e3e3a59eb, type: 3}
     attribute: m_Sprite
     path: 
@@ -42,14 +40,13 @@ AnimationClip:
       customType: 23
       isPPtrCurve: 1
     pptrCurveMapping:
-    - {fileID: -675655701, guid: 9f291013d543d0e41a300c7e3e3a59eb, type: 3}
     - {fileID: 61104119, guid: 9f291013d543d0e41a300c7e3e3a59eb, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.2
+    m_StopTime: 0.1
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
